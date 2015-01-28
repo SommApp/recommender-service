@@ -26,7 +26,7 @@ public class RecommenderResource {
 
 	@GET
 	@Timed
-    @Path("/hello-world")
+    @Path("hello-world")
 	public Saying sayHello(@QueryParam("name") Optional<String> name) {
 		return new Saying(counter.incrementAndGet(),
 			String.format(template, name.or(defaultName)));
