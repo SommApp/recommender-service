@@ -5,14 +5,14 @@ import org.joda.time.Interval;
 
 public class CompleteVisit extends PartialVisit {
 
-    private final Interval duration;
+    private final long duration;
 
     public CompleteVisit(PartialVisit partialVisit) {
         super(partialVisit);
-        this.duration = new Interval(beginVisit, new Instant());
+        this.duration = new Interval(beginVisit, new Instant()).toDurationMillis();
     }
 
     public long getDurationInMilliseconds() {
-        return duration.toDurationMillis();
+        return duration;
     }
 }
