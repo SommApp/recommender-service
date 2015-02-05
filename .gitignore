@@ -117,4 +117,4 @@ pom.xml.next
 release.properties
 
 #### Scripts ###
-ec2Connect.ssh
+ec2Connect.sh
