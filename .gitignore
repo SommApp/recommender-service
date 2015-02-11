@@ -116,3 +116,5 @@ pom.xml.versionsBackup
 pom.xml.next
 release.properties
 
+### Others ###
+ec2Connect.sh
