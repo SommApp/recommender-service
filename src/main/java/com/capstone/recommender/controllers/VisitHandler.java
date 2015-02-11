@@ -1,17 +1,18 @@
+/**
+ * @author  sethwiesman 2/10/15.
+ */
+
 package com.capstone.recommender.controllers;
 
+import com.capstone.recommender.models.CompleteVisit;
 import com.capstone.recommender.models.PartialVisit;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.RemovalListener;
-import com.google.common.cache.RemovalNotification;
 
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
-/**
- * @author  sethwiesman 2/10/15.
- */
+
 public class VisitHandler {
 
     private final Cache<Long, PartialVisit> visitByToken;
@@ -40,7 +41,7 @@ public class VisitHandler {
     }
 
     protected void writeVisit(PartialVisit partialVisit) {
-        
+        final CompleteVisit completeVisit = new CompleteVisit(partialVisit);
     }
 
 }
