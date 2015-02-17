@@ -2,7 +2,9 @@ package com.capstone.recommender.models;
 
 import org.joda.time.DateTime;
 
-public class PartialVisit {
+import javax.validation.constraints.NotNull;
+
+public class PartialVisit implements Comparable {
 
     protected final long userId;
     protected final long restaurantId;
@@ -20,6 +22,10 @@ public class PartialVisit {
         this.beginVisit = that.getBeginVisit();
     }
 
+    public long getUserId() {
+        return userId;
+    }
+
     public long getRestaurantId() {
         return restaurantId;
     }
@@ -28,7 +34,32 @@ public class PartialVisit {
         return beginVisit;
     }
 
-    public long getUserId() {
-        return userId;
+    @Override
+    public int compareTo(@NotNull Object o) {
+        if (!(o instanceof PartialVisit)) {
+            throw new ClassCastException();
+        }
+
+        PartialVisit that = (PartialVisit) o;
+
+        if (this.userId < that.userId) {
+            return -1;
+        } else if (this.userId > that.userId) {
+            return 1;
+        }
+
+
+        if (this.restaurantId < that.restaurantId) {
+            return -1;
+        } else if (this.restaurantId > that.restaurantId) {
+            return 1;
+        }
+
+        final int beginVisitCompare = this.beginVisit.compareTo(that.beginVisit);
+        if (beginVisitCompare != 0) {
+            return beginVisitCompare;
+        }
+
+        return 0;
     }
 }
