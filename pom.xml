@@ -6,6 +6,9 @@
   <version>0.0.1-SNAPSHOT</version>
   <name>recommender-service</name>
   <description>recommender-service</description>
+    <properties>
+        <powermock.version>1.6.1</powermock.version>
+    </properties>
   <dependencies>
       <dependency>
           <groupId>com.yammer.dropwizard</groupId>
@@ -16,6 +19,50 @@
           <groupId>joda-time</groupId>
           <artifactId>joda-time</artifactId>
           <version>2.7</version>
+      </dependency>
+      <dependency>
+          <groupId>junit</groupId>
+          <artifactId>junit</artifactId>
+          <version>4.10</version>
+          <scope>test</scope>
+      </dependency>
+          <dependency>
+              <groupId>org.powermock</groupId>
+              <artifactId>powermock-module-junit4</artifactId>
+              <version>${powermock.version}</version>
+              <scope>test</scope>
+          </dependency>
+          <dependency>
+              <groupId>org.powermock</groupId>
+              <artifactId>powermock-api-easymock</artifactId>
+              <version>${powermock.version}</version>
+              <scope>test</scope>
+          </dependency>
+      <dependency>
+          <groupId>org.sonatype.sisu</groupId>
+          <artifactId>sisu-guice</artifactId>
+          <version>3.0.3</version>
+      </dependency>
+      <dependency>
+          <groupId>org.sonatype.sisu</groupId>
+          <artifactId>sisu-guice</artifactId>
+          <version>3.0.3</version>
+      </dependency>
+      <dependency>
+          <groupId>org.sonatype.sisu</groupId>
+          <artifactId>sisu-guice</artifactId>
+          <version>3.0.3</version>
+      </dependency>
+      <dependency>
+          <groupId>org.apache.hadoop</groupId>
+          <artifactId>hadoop-core</artifactId>
+          <version>0.20.2</version>
+      </dependency>
+      <dependency>
+          <groupId>org.mockito</groupId>
+          <artifactId>mockito-all</artifactId>
+          <version>1.8.5</version>
+          <scope>test</scope>
       </dependency>
   </dependencies>
   <build>
