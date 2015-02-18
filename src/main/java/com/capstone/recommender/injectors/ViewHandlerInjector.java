@@ -11,6 +11,8 @@ import org.apache.hadoop.conf.Configuration;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author by sethwiesman on 2/15/15.
@@ -19,13 +21,8 @@ public class ViewHandlerInjector extends AbstractModule {
 
     @Override
     protected void configure() {
-        //bind(CacheBuilder.class).to(CacheBuilder.class);
+        bind(Map.class).to(ConcurrentHashMap.class);
         bind(OutputStream.class).to(OutputStream.class);
-    }
-
-    @Provides
-    CacheBuilder provideCacheBuilder() {
-        return CacheBuilder.newBuilder();
     }
 
     @Provides
@@ -34,11 +31,10 @@ public class ViewHandlerInjector extends AbstractModule {
         final Configuration conf = new Configuration();
         try {
             final FileSystem fs = FileSystem.get(URI.create(dest), conf);
-            final OutputStream outputStream = fs.create(new Path(dest), () -> {
+
+            return fs.create(new Path(dest), () -> {
                 System.out.print("*");
             });
-
-            return outputStream;
         } catch (IOException e) {
             e.printStackTrace();
         }

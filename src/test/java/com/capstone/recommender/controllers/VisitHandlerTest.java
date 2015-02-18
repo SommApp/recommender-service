@@ -13,6 +13,8 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author by sethwiesman on 2/15/15.
@@ -20,7 +22,7 @@ import java.io.OutputStream;
 public class VisitHandlerTest {
 
     OutputStream mockOutStream;
-    Cache<Long, PartialVisit> cache;
+    Map<Long, PartialVisit> cache;
     VisitHandler visitHandler;
 
     @Before
@@ -28,11 +30,9 @@ public class VisitHandlerTest {
         mockOutStream = mock(OutputStream.class);
         doNothing().when(mockOutStream).write(any(byte[].class));
 
-        cache = CacheBuilder.newBuilder().build();
+        cache = new HashMap<>();
 
-
-        VisitCache builder = spy(VisitCache.buildCache(removalNotification -> {}));
-        visitHandler = new VisitHandler(builder, mockOutStream);
+        visitHandler = new VisitHandler(cache, mockOutStream);
     }
 
     @Test
@@ -45,7 +45,7 @@ public class VisitHandlerTest {
         assertEquals("Token is the wrong value", 1, token);
         assertEquals("There are no users in the cache when there should be one", 1, cache.size());
 
-        PartialVisit visit = cache.getIfPresent(token);
+        PartialVisit visit = cache.get(token);
         assertNotNull("The user was not put in the cache", visit);
         assertEquals("Uid was changed when it should have remained the same", uid, visit.getUserId());
         assertEquals("Rid was changed when it should have remained the same", rid, visit.getRestaurantId());
