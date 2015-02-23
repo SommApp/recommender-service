@@ -16,6 +16,12 @@ public class PartialVisit implements Comparable<PartialVisit> {
         this.beginVisit = new DateTime();
     }
 
+    protected PartialVisit(long userId, long restaurantId, DateTime dateTime) {
+        this.userId = userId;
+        this.restaurantId = restaurantId;
+        this.beginVisit = dateTime;
+    }
+
     protected PartialVisit(PartialVisit that) {
         this.userId = that.getUserId();
         this.restaurantId = that.getRestaurantId();
