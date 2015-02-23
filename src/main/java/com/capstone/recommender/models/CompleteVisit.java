@@ -25,14 +25,7 @@ public class CompleteVisit extends PartialVisit {
         return data;
     }
 
-    @Override
-    public int compareTo(@NotNull Object o) {
-
-        if (!(o instanceof CompleteVisit)) {
-            throw new ClassCastException();
-        }
-
-        final CompleteVisit that = (CompleteVisit) o;
+    public int compareTo(@NotNull CompleteVisit that) {
 
         if (super.compareTo(that) == 0) {
             return 0;

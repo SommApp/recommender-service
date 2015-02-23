@@ -4,7 +4,7 @@ import org.joda.time.DateTime;
 
 import javax.validation.constraints.NotNull;
 
-public class PartialVisit implements Comparable {
+public class PartialVisit implements Comparable<PartialVisit> {
 
     protected final long userId;
     protected final long restaurantId;
@@ -35,12 +35,7 @@ public class PartialVisit implements Comparable {
     }
 
     @Override
-    public int compareTo(@NotNull Object o) {
-        if (!(o instanceof PartialVisit)) {
-            throw new ClassCastException();
-        }
-
-        PartialVisit that = (PartialVisit) o;
+    public int compareTo(@NotNull PartialVisit that) {
 
         if (this.userId < that.userId) {
             return -1;
