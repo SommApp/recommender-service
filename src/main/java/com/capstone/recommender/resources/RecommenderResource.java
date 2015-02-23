@@ -1,9 +1,12 @@
 package com.capstone.recommender.resources;
 
+import com.capstone.recommender.controllers.VisitHandler;
+import com.capstone.recommender.injectors.ViewHandlerInjector;
 import com.capstone.recommender.models.Analytic;
 import com.capstone.recommender.models.Saying;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
+import com.google.inject.Guice;
 import com.yammer.metrics.annotation.Timed;
 
 import javax.ws.rs.*;
@@ -17,11 +20,15 @@ public class RecommenderResource {
 	private final String defaultName;
 	private final AtomicLong counter;
 
+    private final VisitHandler visitHandler;
+
 	public RecommenderResource(String template, String defaultName) {
 		this.template = template;
 		this.defaultName = defaultName;
 		this.counter = new AtomicLong();
-	}
+
+        this.visitHandler = Guice.createInjector(new ViewHandlerInjector()).getInstance(VisitHandler.class);
+    }
 
 	@GET
 	@Timed
@@ -34,15 +41,15 @@ public class RecommenderResource {
     @POST
     @Timed
     @Path("visit/restaurant/begin/{userId}/{restaurantId}")
-    public long beginRestaurantVisit(@PathParam("userId") long userId, @PathParam("resaurantId") long restaurantId) {
-        return 12345;
+    public long beginRestaurantVisit(@PathParam("userId") long userId, @PathParam("restaurantId") long restaurantId) {
+        return visitHandler.beginVisit(userId, restaurantId);
     }
 
     @PUT
     @Timed
     @Path("visit/restaurant/end/{token}")
     public void endRestaurantVisit(@PathParam("token") long token) {
-
+        visitHandler.endVisit(token);
     }
 
     @GET
