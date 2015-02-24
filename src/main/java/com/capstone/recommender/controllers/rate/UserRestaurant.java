@@ -63,4 +63,9 @@ public class UserRestaurant implements Comparable<UserRestaurant>, Writable, Wri
         result = prime * result + (int) (uid ^ (uid >>> shift));
         return result;
     }
+
+    @Override
+    public String toString() {
+        return uid + "\t" + rid;
+    }
 }
