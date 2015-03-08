@@ -3,6 +3,7 @@ package com.capstone.recommender.controllers.rate;
 import org.apache.hadoop.io.DoubleWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
+
 import org.apache.hadoop.mapreduce.Reducer;
 
 import java.io.IOException;
@@ -22,5 +23,4 @@ public class RateReducer extends Reducer<UserRestaurant, DoubleWritable, Text, L
 
         context.write(new Text(key.toString()), new LongWritable(score));
     }
-
 }

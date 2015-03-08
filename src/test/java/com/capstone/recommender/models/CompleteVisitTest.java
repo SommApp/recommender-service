@@ -40,8 +40,8 @@ public class CompleteVisitTest {
 
         final String line = uid + "\t"
                             + rid + "\t"
-                            + now.toString()
-                            + "\t" + Hours.ONE.toStandardDuration().getMillis() + "\n";
+                            + now.toString() + "\t"
+                            + Hours.ONE.toStandardDuration().getMillis() + "\n";
 
         Optional<CompleteVisit> visitOptional = CompleteVisit.parse(line);
         assertTrue("Failed to parse valid line", visitOptional.isPresent());
