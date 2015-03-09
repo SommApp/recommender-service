@@ -1,5 +1,6 @@
 package com.capstone.recommender.injectors;
 
+import com.capstone.recommender.RecommenderConstants;
 import com.google.common.cache.CacheBuilder;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
@@ -27,7 +28,7 @@ public class ViewHandlerInjector extends AbstractModule {
 
     @Provides
     OutputStream provideOutputStream() {
-        final String dest = "/usr/restaurant/visits";
+        final String dest = RecommenderConstants.VISIT_FILE;
         final Configuration conf = new Configuration();
         try {
             final FileSystem fs = FileSystem.get(URI.create(dest), conf);

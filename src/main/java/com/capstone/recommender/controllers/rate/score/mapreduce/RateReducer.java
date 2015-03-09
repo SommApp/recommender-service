@@ -1,5 +1,6 @@
-package com.capstone.recommender.controllers.rate;
+package com.capstone.recommender.controllers.rate.score.mapreduce;
 
+import com.capstone.recommender.controllers.rate.UserRestaurant;
 import org.apache.hadoop.io.DoubleWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;

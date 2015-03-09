@@ -1,7 +1,7 @@
 package com.capstone.recommender.controllers;
 
-import com.capstone.recommender.controllers.rate.RateMapper;
-import com.capstone.recommender.controllers.rate.RateReducer;
+import com.capstone.recommender.controllers.rate.score.mapreduce.RateMapper;
+import com.capstone.recommender.controllers.rate.score.mapreduce.RateReducer;
 import com.capstone.recommender.controllers.rate.UserRestaurant;
 
 import com.capstone.recommender.models.CompleteVisit;

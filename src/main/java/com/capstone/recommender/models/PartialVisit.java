@@ -49,7 +49,6 @@ public class PartialVisit implements Comparable<PartialVisit> {
             return 1;
         }
 
-
         if (this.restaurantId < that.restaurantId) {
             return -1;
         } else if (this.restaurantId > that.restaurantId) {
