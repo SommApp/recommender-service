@@ -28,32 +28,39 @@ import org.joda.time.format.DateTimeFormatter;
 /**
  * @author by sethwiesman on 3/8/15.
  */
-public class RecomendationEngine {
+public class RecommendationEngine implements Runnable{
 
     private final ScoreGenerator scoreGenerator;
     private final ScheduledExecutorService executorService;
+    final AtomicReference<Optional<String>> outputFile;
 
-    public RecomendationEngine() {
-        this.scoreGenerator = new ScoreGenerator();
+    public RecommendationEngine()  {
+        this.outputFile = new AtomicReference<>(Optional.<String>empty());
+        this.scoreGenerator = new ScoreGenerator(outputFile);
+
         this.executorService = new ScheduledThreadPoolExecutor(1);
-        this.executorService.scheduleWithFixedDelay(this.scoreGenerator, 1, 24, TimeUnit.HOURS);
+        this.executorService.scheduleWithFixedDelay(this, 0, 24, TimeUnit.HOURS);
     }
 
-    private static class ScoreGenerator implements Runnable {
+    @Override
+    public void run() {
+        this.scoreGenerator.runMapReduce();
+    }
+
+    private static class ScoreGenerator  {
         private final static String outputPrefix = "ratings/users/";
 
         final AtomicReference<Optional<String>> outputFile;
         final DateTimeFormatter formatter;
         final Configuration conf;
 
-        public ScoreGenerator() {
-            this.outputFile = new AtomicReference<>(Optional.<String>empty());
+        public ScoreGenerator(AtomicReference<Optional<String>> outputFile) {
             this.formatter = DateTimeFormat.forPattern("MM/dd/yyyy");
             this.conf = new Configuration();
+            this.outputFile = outputFile;
         }
 
-        @Override
-        public void run() {
+        public void runMapReduce() {
             final String newOutputFile = generateOutputFileName();
 
             try {
@@ -71,11 +78,12 @@ public class RecomendationEngine {
                 FileInputFormat.addInputPath(job, new Path(RecommenderConstants.VISIT_FILE));
                 FileOutputFormat.setOutputPath(job, new Path(newOutputFile));
 
-                boolean result = job.waitForCompletion(true);
+                boolean jobWasSuccessful = job.waitForCompletion(true);
 
-                if (result == true) {
-                    this.outputFile.set(Optional.of(newOutputFile));
+                if (jobWasSuccessful) {
+                    outputFile.set(Optional.of(newOutputFile));
                 }
+
             } catch (IOException ioe) {
             } catch (InterruptedException e) {
                 e.printStackTrace();
