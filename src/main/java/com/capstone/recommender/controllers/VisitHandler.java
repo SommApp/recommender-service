@@ -46,11 +46,10 @@ public class VisitHandler implements Runnable{
         return token;
     }
 
-    public boolean endVisit(long token) {
+    public void endVisit(long token) {
         final PartialVisit partialVisit = visitByToken.remove(token);
         if (partialVisit != null) {
             finishedVisits.add(new CompleteVisit(partialVisit));
-            return true;
         }
 
         return false;
