@@ -58,10 +58,11 @@ public class VisitHandler implements Runnable{
 
     @Override
     public void run() {
-        String filename = "hdfs:///user/visits/restaurants/" + atomicLong.getAndIncrement();
+        String filename = "hdfs://localhost:9000user/visits/restaurants/" + atomicLong.getAndIncrement();
         Path dest = new Path(filename);
         Configuration conf = new Configuration();
-
+        conf.addResource(new Path("$HADOOP_PREFIX/conf/core-site.xml"));
+        conf.addResource(new Path("$HADOOP_PREFIX/conf/hdfs-site.xml"));
         StringBuilder builder = new StringBuilder();
         for (CompleteVisit elem : finishedVisits) {
             builder.append(elem.toString());
