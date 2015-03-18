@@ -33,16 +33,16 @@ public class RecommenderResource {
 
     @POST
     @Timed
-    @Path("visit/restaurant/begin/{userId}/{restaurantId}")
+    @Path("visit/restaurant/{userId}/{restaurantId}")
     public long beginRestaurantVisit(@PathParam("userId") long userId, @PathParam("resaurantId") long restaurantId) {
         return 12345;
     }
 
     @PUT
     @Timed
-    @Path("visit/restaurant/end/{token}")
-    public void endRestaurantVisit(@PathParam("token") long token) {
-
+    @Path("visit/restaurant/{token}")
+    public boolean endRestaurantVisit(@PathParam("token") long token) {
+        return true;
     }
 
     @GET
