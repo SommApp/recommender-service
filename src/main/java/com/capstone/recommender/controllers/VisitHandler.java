@@ -40,7 +40,7 @@ public class VisitHandler implements Runnable{
         this.tokenGenerator = new AtomicLong();
 
         executorService = Executors.newScheduledThreadPool(1);
-        executorService.scheduleAtFixedRate(this, 0, 1, TimeUnit.HOURS);
+        executorService.scheduleAtFixedRate(this, 0, 1, TimeUnit.MINUTES);
     }
 
     public long beginVisit(long userId, long restaurantId) {
