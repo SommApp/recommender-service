@@ -27,16 +27,14 @@ public class VisitHandler implements Runnable{
 
     private final Map<Long, PartialVisit> visitByToken;
     private final Collection<CompleteVisit> finishedVisits;
-    private final OutputStream writer;
     private final AtomicLong tokenGenerator;
     private final ScheduledExecutorService executorService;
 
 
     @Inject
-    public VisitHandler(Map<Long, PartialVisit> visitByToken, Collection<CompleteVisit> finishedVisits, OutputStream writer){
+    public VisitHandler(Map<Long, PartialVisit> visitByToken, Collection<CompleteVisit> finishedVisits){
         this.visitByToken = visitByToken;
         this.finishedVisits = finishedVisits;
-        this.writer = writer;
         this.tokenGenerator = new AtomicLong();
 
         executorService = Executors.newScheduledThreadPool(1);
