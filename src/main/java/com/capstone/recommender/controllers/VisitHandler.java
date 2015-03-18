@@ -74,8 +74,13 @@ public class VisitHandler implements Runnable{
         FileSystem fs = null;
         try {
             fs = FileSystem.get(URI.create(filename), conf);
-            OutputStream out = fs.append(new Path(filename));
-            IOUtils.copyBytes(in, out, 4096, true);
+            OutputStream out;
+            if (!fs.exists(dest)) {
+                out = fs.create(dest);
+            }else {
+                out = fs.append(new Path(filename));
+            }
+            IOUtils.copyBytes(in, out, conf);
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
