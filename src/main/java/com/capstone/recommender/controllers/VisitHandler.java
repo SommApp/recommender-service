@@ -58,7 +58,7 @@ public class VisitHandler implements Runnable{
 
     @Override
     public void run() {
-        Path path = new Path("/user/visits/restaurants");
+        Path path = new Path("hdfs://localhost:54310/user/visits/restaurants");
         try {
             FileSystem fs = FileSystem.get(new Configuration());
             BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(fs.create(path, true)));
