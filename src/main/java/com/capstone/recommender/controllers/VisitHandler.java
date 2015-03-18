@@ -50,6 +50,7 @@ public class VisitHandler implements Runnable{
         final PartialVisit partialVisit = visitByToken.remove(token);
         if (partialVisit != null) {
             finishedVisits.add(new CompleteVisit(partialVisit));
+            return true;
         }
 
         return false;
