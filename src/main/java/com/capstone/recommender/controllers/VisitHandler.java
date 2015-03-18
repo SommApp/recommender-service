@@ -12,10 +12,12 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IOUtils;
+import org.apache.hadoop.util.Progressable;
 import org.joda.time.DateTime;
 
 import java.io.*;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.*;
@@ -58,11 +60,12 @@ public class VisitHandler implements Runnable{
 
     @Override
     public void run() {
+        Configuration configuration = new Configuration();
         String filename = "hdfs://localhost:9000user/visits/restaurants/" + atomicLong.getAndIncrement();
-        Path dest = new Path(filename);
-        Configuration conf = new Configuration();
-        conf.addResource(new Path("$HADOOP_PREFIX/conf/core-site.xml"));
-        conf.addResource(new Path("$HADOOP_PREFIX/conf/hdfs-site.xml"));
+
+        FileSystem fs = null;
+        BufferedWriter br = null;
+
         StringBuilder builder = new StringBuilder();
         for (CompleteVisit elem : finishedVisits) {
             builder.append(elem.toString());
@@ -70,20 +73,28 @@ public class VisitHandler implements Runnable{
 
         final String data = builder.toString();
 
-        InputStream in = new BufferedInputStream(new ByteArrayInputStream(data.getBytes()));
-
-        FileSystem fs = null;
         try {
-            fs = FileSystem.get(URI.create(filename), conf);
-            OutputStream out = fs.create(dest);
-
-            IOUtils.copyBytes(in, out, conf);
+            fs = FileSystem.get(new URI("hdfs://localhost/9000"), configuration);
+            Path file = new Path(filename);
+            OutputStream os = fs.create(file, () -> System.out.println("*"));
+            br = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
+            br.write(data);
         } catch (IOException e) {
             e.printStackTrace();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
         } finally {
-            if (fs != null) {
+            if (fs != null){
                 try {
                     fs.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            if (br != null) {
+                try {
+                    br.close();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
