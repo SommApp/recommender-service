@@ -12,6 +12,7 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IOUtils;
+import org.joda.time.DateTime;
 
 import java.io.*;
 import java.net.URI;
@@ -19,7 +20,6 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.stream.Collectors;
 
 public class VisitHandler implements Runnable{
 
@@ -27,13 +27,13 @@ public class VisitHandler implements Runnable{
     private final Collection<CompleteVisit> finishedVisits;
     private final AtomicLong tokenGenerator;
     private final ScheduledExecutorService executorService;
-
-
+    private final AtomicLong atomicLong;
     @Inject
     public VisitHandler(){
         this.visitByToken = new ConcurrentHashMap<>();
         this.finishedVisits = new ConcurrentLinkedDeque<>();
         this.tokenGenerator = new AtomicLong();
+        this.atomicLong = new AtomicLong();
 
         executorService = Executors.newScheduledThreadPool(1);
         executorService.scheduleAtFixedRate(this, 0, 1, TimeUnit.MINUTES);
@@ -58,7 +58,7 @@ public class VisitHandler implements Runnable{
 
     @Override
     public void run() {
-        String filename = "/user/visits/restaurants";
+        String filename = "/user/visits/restaurants/" + atomicLong.getAndIncrement();
         Path dest = new Path(filename);
         Configuration conf = new Configuration();
 
@@ -74,12 +74,8 @@ public class VisitHandler implements Runnable{
         FileSystem fs = null;
         try {
             fs = FileSystem.get(URI.create(filename), conf);
-            OutputStream out;
-            if (!fs.exists(dest)) {
-                out = fs.create(dest);
-            }else {
-                out = fs.append(new Path(filename));
-            }
+            OutputStream out = fs.create(dest);
+
             IOUtils.copyBytes(in, out, conf);
         } catch (IOException e) {
             e.printStackTrace();
