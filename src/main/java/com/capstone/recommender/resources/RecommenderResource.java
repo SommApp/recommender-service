@@ -40,14 +40,14 @@ public class RecommenderResource {
 
     @POST
     @Timed
-    @Path("visit/restaurant/begin/{userId}/{restaurantId}")
+    @Path("visit/restaurant/{userId}/{restaurantId}")
     public long beginRestaurantVisit(@PathParam("userId") long userId, @PathParam("restaurantId") long restaurantId) {
         return visitHandler.beginVisit(userId, restaurantId);
     }
 
     @PUT
     @Timed
-    @Path("visit/restaurant/end/{token}")
+    @Path("visit/restaurant/{token}")
     public void endRestaurantVisit(@PathParam("token") long token) {
         visitHandler.endVisit(token);
     }
