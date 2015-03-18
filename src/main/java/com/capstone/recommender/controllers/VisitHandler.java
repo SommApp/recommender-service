@@ -42,17 +42,18 @@ public class VisitHandler implements Runnable{
     public long beginVisit(long userId, long restaurantId) {
         final long token = tokenGenerator.getAndIncrement();
         final PartialVisit visit = new PartialVisit(userId, restaurantId);
-System.out.println("a");
         visitByToken.put(token, visit);
-System.out.println("b");
         return token;
     }
 
-    public void endVisit(long token) {
+    public boolean endVisit(long token) {
         final PartialVisit partialVisit = visitByToken.remove(token);
         if (partialVisit != null) {
             finishedVisits.add(new CompleteVisit(partialVisit));
+            return true;
         }
+
+        return false;
     }
 
     @Override
@@ -64,7 +65,7 @@ System.out.println("b");
             for(CompleteVisit element : finishedVisits) {
                 writer.write(element.toString());
             }
-
+System.out.println("Writing out");
             finishedVisits.clear();
             writer.close();
         } catch (IOException e) {
