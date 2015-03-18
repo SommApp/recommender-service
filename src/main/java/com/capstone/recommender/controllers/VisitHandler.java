@@ -42,9 +42,9 @@ public class VisitHandler implements Runnable{
     public long beginVisit(long userId, long restaurantId) {
         final long token = tokenGenerator.getAndIncrement();
         final PartialVisit visit = new PartialVisit(userId, restaurantId);
-
+System.out.println("a");
         visitByToken.put(token, visit);
-
+System.out.println("b");
         return token;
     }
 
