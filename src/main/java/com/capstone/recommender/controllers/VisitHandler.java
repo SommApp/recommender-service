@@ -8,25 +8,39 @@ import com.capstone.recommender.models.CompleteVisit;
 import com.capstone.recommender.models.PartialVisit;
 
 import com.google.inject.Inject;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.Path;
 
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.util.Collection;
 import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
-public class VisitHandler {
+public class VisitHandler implements Runnable{
 
     private final Map<Long, PartialVisit> visitByToken;
+    private final Collection<CompleteVisit> finishedVisits;
     private final OutputStream writer;
     private final AtomicLong tokenGenerator;
+    private final ScheduledExecutorService executorService;
+
 
     @Inject
-    public VisitHandler(Map<Long, PartialVisit> visitByToken, OutputStream writer) {
+    public VisitHandler(Map<Long, PartialVisit> visitByToken, Collection<CompleteVisit> finishedVisits, OutputStream writer){
         this.visitByToken = visitByToken;
-
-        //TODO Find a better way of doing this
+        this.finishedVisits = finishedVisits;
         this.writer = writer;
         this.tokenGenerator = new AtomicLong();
+
+        executorService = Executors.newScheduledThreadPool(1);
+        executorService.scheduleAtFixedRate(this, 0, 1, TimeUnit.HOURS);
     }
 
     public long beginVisit(long userId, long restaurantId) {
@@ -39,20 +53,26 @@ public class VisitHandler {
     }
 
     public void endVisit(long token) {
-        final PartialVisit partialVisit = visitByToken.get(token);
+        final PartialVisit partialVisit = visitByToken.remove(token);
         if (partialVisit != null) {
-            visitByToken.remove(token);
-            writeVisit(partialVisit);
+            finishedVisits.add(new CompleteVisit(partialVisit));
         }
     }
 
-    protected void writeVisit(PartialVisit partialVisit) {
-        final CompleteVisit completeVisit = new CompleteVisit(partialVisit);
+    @Override
+    public void run() {
+        Path path = new Path("hdfs://localhost:54310/user/visits/restaurants");
         try {
-            writer.write(completeVisit.toString().getBytes());
+            FileSystem fs = FileSystem.get(new Configuration());
+            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(fs.create(path, true)));
+            for(CompleteVisit element : finishedVisits) {
+                writer.write(element.toString());
+            }
+
+            finishedVisits.clear();
+            writer.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-
 }
