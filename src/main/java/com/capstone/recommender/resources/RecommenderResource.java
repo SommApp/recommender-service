@@ -27,7 +27,7 @@ public class RecommenderResource {
 		this.defaultName = defaultName;
 		this.counter = new AtomicLong();
 
-        this.visitHandler = Guice.createInjector(new ViewHandlerInjector()).getInstance(VisitHandler.class);
+        this.visitHandler = new VisitHandler();
     }
 
 	@GET

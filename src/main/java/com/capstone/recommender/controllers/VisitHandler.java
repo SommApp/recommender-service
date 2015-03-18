@@ -18,9 +18,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.Collection;
 import java.util.Map;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class VisitHandler implements Runnable{
@@ -32,9 +30,9 @@ public class VisitHandler implements Runnable{
 
 
     @Inject
-    public VisitHandler(Map<Long, PartialVisit> visitByToken, Collection<CompleteVisit> finishedVisits){
-        this.visitByToken = visitByToken;
-        this.finishedVisits = finishedVisits;
+    public VisitHandler(){
+        this.visitByToken = new ConcurrentHashMap<>();
+        this.finishedVisits = new ConcurrentLinkedDeque<>();
         this.tokenGenerator = new AtomicLong();
 
         executorService = Executors.newScheduledThreadPool(1);
