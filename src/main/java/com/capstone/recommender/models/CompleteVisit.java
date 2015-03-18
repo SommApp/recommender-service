@@ -13,7 +13,7 @@ public class CompleteVisit extends PartialVisit {
     public CompleteVisit(PartialVisit partialVisit) {
         super(partialVisit);
         this.duration = new Interval(beginVisit, new Instant()).toDurationMillis();
-        this.data = userId + "\t" + restaurantId + "\t" + beginVisit + "\t" + duration + "\n";
+        this.data = userId + "\t" + restaurantId + "\t" + beginVisit + "\t" + duration;
     }
 
     public long getDurationInMilliseconds() {

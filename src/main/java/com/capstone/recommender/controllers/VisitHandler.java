@@ -11,15 +11,15 @@ import com.google.inject.Inject;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.IOUtils;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
+import java.io.*;
+import java.net.URI;
 import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
 
 public class VisitHandler implements Runnable{
 
@@ -58,18 +58,34 @@ public class VisitHandler implements Runnable{
 
     @Override
     public void run() {
-        Path path = new Path("hdfs://localhost:54310/user/visits/restaurants");
+        String filename = "hdfs://localhost:54310/user/visits/restaurants";
+        Path dest = new Path(filename);
+        Configuration conf = new Configuration();
+
+        StringBuilder builder = new StringBuilder();
+        for (CompleteVisit elem : finishedVisits) {
+            builder.append(elem.toString());
+        }
+
+        final String data = builder.toString();
+
+        InputStream in = new BufferedInputStream(new ByteArrayInputStream(data.getBytes()));
+
+        FileSystem fs = null;
         try {
-            FileSystem fs = FileSystem.get(new Configuration());
-            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(fs.create(path, true)));
-            for(CompleteVisit element : finishedVisits) {
-                writer.write(element.toString());
-            }
-System.out.println("Writing out");
-            finishedVisits.clear();
-            writer.close();
+            fs = FileSystem.get(URI.create(filename), conf);
+            OutputStream out = fs.append(new Path(filename));
+            IOUtils.copyBytes(in, out, 4096, true);
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            if (fs != null) {
+                try {
+                    fs.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 }
