@@ -58,7 +58,7 @@ public class VisitHandler implements Runnable{
 
     @Override
     public void run() {
-        String filename = "hdfs://localhost:54310/user/visits/restaurants";
+        String filename = "/user/visits/restaurants";
         Path dest = new Path(filename);
         Configuration conf = new Configuration();
 
