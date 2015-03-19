@@ -61,44 +61,29 @@ public class VisitHandler implements Runnable{
     @Override
     public void run() {
         Configuration configuration = new Configuration();
-        String filename = "hdfs://localhost:9000user/visits/restaurants/" + atomicLong.getAndIncrement();
+        String filename = "/user/visits/restaurants/" + atomicLong.getAndIncrement();
 
-        FileSystem fs = null;
-        BufferedWriter br = null;
+        File file = new File("/tmp" + filename);
 
-        StringBuilder builder = new StringBuilder();
-        for (CompleteVisit elem : finishedVisits) {
-            builder.append(elem.toString());
-        }
+       try {
+           if (!file.exists()) {
+               file.createNewFile();
+               FileWriter fw = new FileWriter(file.getAbsolutePath());
+               BufferedWriter bw = new BufferedWriter(fw);
 
-        final String data = builder.toString();
+               for(CompleteVisit element : finishedVisits) {
+                   bw.write(element.toString());
+               }
 
-        try {
-            fs = FileSystem.get(new URI("hdfs://localhost/9000"), configuration);
-            Path file = new Path(filename);
-            OutputStream os = fs.create(file, () -> System.out.println("*"));
-            br = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
-            br.write(data);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        } finally {
-            if (fs != null){
-                try {
-                    fs.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            if (br != null) {
-                try {
-                    br.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
+               bw.close();
+           }
+           
+           Process p = Runtime.getRuntime().exec("hadoop fs -put /tmp" + filename + " " + filename);
+           p.waitFor();
+       } catch (IOException io) {
+           io.printStackTrace();
+       } catch (InterruptedException e) {
+           e.printStackTrace();
+       }
     }
 }
