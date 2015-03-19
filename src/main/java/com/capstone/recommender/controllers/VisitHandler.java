@@ -63,27 +63,28 @@ public class VisitHandler implements Runnable{
         Configuration configuration = new Configuration();
         String filename = "/user/visits/restaurants/" + atomicLong.getAndIncrement();
 
-        File file = new File("/tmp" + filename);
+        FileWriter fw = null;
+        try {
+           fw = new FileWriter(filename);
 
-       try {
-           if (!file.exists()) {
-               file.createNewFile();
-               FileWriter fw = new FileWriter(file.getAbsolutePath());
-               BufferedWriter bw = new BufferedWriter(fw);
-
-               for(CompleteVisit element : finishedVisits) {
-                   bw.write(element.toString());
-               }
-
-               bw.close();
+           for (CompleteVisit element : finishedVisits) {
+               fw.write(element.toString());
            }
-           
+
            Process p = Runtime.getRuntime().exec("hadoop fs -put /tmp" + filename + " " + filename);
            p.waitFor();
-       } catch (IOException io) {
+        } catch (IOException io) {
            io.printStackTrace();
-       } catch (InterruptedException e) {
+        } catch (InterruptedException e) {
            e.printStackTrace();
-       }
+        } finally {
+            if (fw != null ) {
+                try {
+                    fw.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 }
