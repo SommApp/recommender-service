@@ -63,9 +63,9 @@ public class VisitHandler implements Runnable{
         Configuration configuration = new Configuration();
         String filename = "/user/visits/restaurants/" + atomicLong.getAndIncrement();
 
-        FileWriter fw = null;
+        PrintWriter fw = null;
         try {
-           fw = new FileWriter(filename);
+           fw = new PrintWriter("/tmp" + filename);
 
            for (CompleteVisit element : finishedVisits) {
                fw.write(element.toString());
@@ -79,11 +79,7 @@ public class VisitHandler implements Runnable{
            e.printStackTrace();
         } finally {
             if (fw != null ) {
-                try {
-                    fw.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                fw.close();
             }
         }
     }
