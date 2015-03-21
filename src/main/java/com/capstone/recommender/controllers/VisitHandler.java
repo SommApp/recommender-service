@@ -30,6 +30,7 @@ public class VisitHandler {
         this.tokenGenerator = new AtomicLong();
         this.file = new File(fileStart + tokenGenerator.getAndIncrement() + ".txt");
         try {
+            file.createNewFile();
             this.fileWriter = new FileWriter(file.getName(), true);
             this.bufferedWriter = new BufferedWriter(fileWriter);
         } catch (IOException e) {
