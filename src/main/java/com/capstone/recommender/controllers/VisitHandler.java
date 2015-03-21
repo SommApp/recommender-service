@@ -60,7 +60,7 @@ public class VisitHandler implements Runnable{
         FileOutputStream out = null;
 
         try {
-            out = new FileOutputStream("/user/rest/visit/" + token);
+            out = new FileOutputStream("/user/rest/visit/" + token + ".txt");
             final PrintStream stream = new PrintStream(out);
             completeVisits.stream().forEach(stream::println);
         } catch (FileNotFoundException e) {
