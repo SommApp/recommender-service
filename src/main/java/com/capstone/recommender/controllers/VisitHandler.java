@@ -7,52 +7,38 @@ package com.capstone.recommender.controllers;
 import com.capstone.recommender.models.CompleteVisit;
 import com.capstone.recommender.models.PartialVisit;
 
-import com.google.inject.Inject;
-
-import java.io.IOException;
-import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class VisitHandler {
 
     private final Map<Long, PartialVisit> visitByToken;
-    private final OutputStream writer;
     private final AtomicLong tokenGenerator;
+    private final ArrayList<CompleteVisit> completeVisits;
 
-    @Inject
-    public VisitHandler(Map<Long, PartialVisit> visitByToken, OutputStream writer) {
-        this.visitByToken = visitByToken;
-
-        //TODO Find a better way of doing this
-        this.writer = writer;
+    public VisitHandler() {
+        this.visitByToken = new ConcurrentHashMap<>();
         this.tokenGenerator = new AtomicLong();
+        this.completeVisits = new ArrayList<>();
     }
 
-    public long beginVisit(long userId, long restaurantId) {
+    public long beginVisit(long uid, long rid) {
         final long token = tokenGenerator.getAndIncrement();
-        final PartialVisit visit = new PartialVisit(userId, restaurantId);
-
-        visitByToken.put(token, visit);
-
+        final PartialVisit visit = new PartialVisit(uid, rid);
+        this.visitByToken.put(token, visit);
         return token;
     }
 
-    public void endVisit(long token) {
-        final PartialVisit partialVisit = visitByToken.get(token);
-        if (partialVisit != null) {
-            visitByToken.remove(token);
-            writeVisit(partialVisit);
+    public boolean endVisit(long token) {
+        final PartialVisit visit = this.visitByToken.remove(token);
+        if (visit == null) {
+            return false;
         }
-    }
 
-    protected void writeVisit(PartialVisit partialVisit) {
-        final CompleteVisit completeVisit = new CompleteVisit(partialVisit);
-        try {
-            writer.write(completeVisit.toString().getBytes());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        final CompleteVisit completeVisit = new CompleteVisit(visit);
+        this.completeVisits.add(completeVisit);
+        return true;
     }
-
 }

@@ -1,12 +1,10 @@
 package com.capstone.recommender.resources;
 
 import com.capstone.recommender.controllers.VisitHandler;
-import com.capstone.recommender.injectors.ViewHandlerInjector;
 import com.capstone.recommender.models.Analytic;
 import com.capstone.recommender.models.Saying;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
-import com.google.inject.Guice;
 import com.yammer.metrics.annotation.Timed;
 
 import javax.ws.rs.*;
@@ -27,7 +25,7 @@ public class RecommenderResource {
 		this.defaultName = defaultName;
 		this.counter = new AtomicLong();
 
-        this.visitHandler = Guice.createInjector(new ViewHandlerInjector()).getInstance(VisitHandler.class);
+        this.visitHandler = null;
     }
 
 	@GET
