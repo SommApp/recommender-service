@@ -25,7 +25,7 @@ public class RecommenderResource {
 		this.defaultName = defaultName;
 		this.counter = new AtomicLong();
 
-        this.visitHandler = null;
+        this.visitHandler = new VisitHandler();
     }
 
 	@GET
