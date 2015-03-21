@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class VisitHandler implements Runnable{
@@ -32,6 +33,7 @@ public class VisitHandler implements Runnable{
         this.fileTokenGenerator = new AtomicLong();
         this.completeVisits = new ArrayList<>();
         this.executorService = new ScheduledThreadPoolExecutor(1);
+        this.executorService.scheduleAtFixedRate(this, 1, 1, TimeUnit.MINUTES);
     }
 
     public long beginVisit(long uid, long rid) {
