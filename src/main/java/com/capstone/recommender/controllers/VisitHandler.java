@@ -53,6 +53,7 @@ public class VisitHandler {
         final CompleteVisit completeVisit = new CompleteVisit(visit);
         try {
             bufferedWriter.write(completeVisit.toString());
+            System.out.println(completeVisit.toString());
             bufferedWriter.close();
         } catch (IOException e) {
             e.printStackTrace();
