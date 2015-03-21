@@ -7,10 +7,7 @@ package com.capstone.recommender.controllers;
 import com.capstone.recommender.models.CompleteVisit;
 import com.capstone.recommender.models.PartialVisit;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.PrintStream;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -57,21 +54,24 @@ public class VisitHandler implements Runnable{
     @Override
     public void run() {
         final long token = fileTokenGenerator.getAndIncrement();
-        FileOutputStream out = null;
+        File out = null;
 
         try {
-            out = new FileOutputStream("/user/rest/visit/" + token + ".txt");
-            final PrintStream stream = new PrintStream(out);
-            completeVisits.stream().forEach(stream::println);
+            out = new File("/user/rest/visit/" + token + ".txt");
+            if (!out.exists())
+                out.createNewFile();
+            final BufferedWriter stream = new BufferedWriter(new FileWriter(out));
+            completeVisits.stream().map(CompleteVisit::toString).forEach((e) -> {
+                try {
+                    stream.write(e);
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+            });
         } catch (FileNotFoundException e) {
             e.printStackTrace();
-        } finally {
-            if (out != null)
-                try {
-                    out.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }
