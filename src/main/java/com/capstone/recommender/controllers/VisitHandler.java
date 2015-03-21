@@ -7,7 +7,10 @@ package com.capstone.recommender.controllers;
 import com.capstone.recommender.models.CompleteVisit;
 import com.capstone.recommender.models.PartialVisit;
 
-import java.sql.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
@@ -16,31 +19,22 @@ public class VisitHandler {
 
     private final Map<Long, PartialVisit> visitByToken;
     private final AtomicLong tokenGenerator;
-    private Connection connection;
-    private PreparedStatement preparedStatement;
+    private File file;
+    private FileWriter fileWriter;
+    private BufferedWriter bufferedWriter;
+
+    private static String fileStart = "~/user/restaurant/visit/";
 
     public VisitHandler() {
         this.visitByToken = new ConcurrentHashMap<>();
         this.tokenGenerator = new AtomicLong();
-
+        this.file = new File(fileStart + tokenGenerator.getAndIncrement() + ".txt");
         try {
-            Class.forName("com.mysql.jdbc.Driver");
-        } catch (ClassNotFoundException e) {
+            this.fileWriter = new FileWriter(file.getName(), true);
+            this.bufferedWriter = new BufferedWriter(fileWriter);
+        } catch (IOException e) {
             e.printStackTrace();
         }
-
-        try {
-            this.connection = DriverManager.getConnection("jdbc:mysql://localhost/feedback?user=root&password=toor");
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        try {
-            this.preparedStatement = connection.prepareStatement("INSERT INTO Visits (uid, rid, date, duration) VALUES (?, ?, ?, ?)");
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
     }
 
     public long beginVisit(long uid, long rid) {
@@ -58,12 +52,9 @@ public class VisitHandler {
 
         final CompleteVisit completeVisit = new CompleteVisit(visit);
         try {
-            preparedStatement.setString(1, String.valueOf(completeVisit.getUserId()));
-            preparedStatement.setString(2, String.valueOf(completeVisit.getRestaurantId()));
-            preparedStatement.setString(3, String.valueOf(completeVisit.getBeginVisit()));
-            preparedStatement.setString(4, String.valueOf(completeVisit.getDurationInMilliseconds()));
-            preparedStatement.executeQuery();
-        } catch (SQLException e) {
+            bufferedWriter.write(completeVisit.toString());
+            bufferedWriter.close();
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return true;
