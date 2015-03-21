@@ -50,19 +50,22 @@ public class VisitHandler {
         return token;
     }
 
-    public boolean endVisit(long token) throws SQLException {
+    public boolean endVisit(long token) {
         final PartialVisit visit = this.visitByToken.remove(token);
         if (visit == null) {
             return false;
         }
 
         final CompleteVisit completeVisit = new CompleteVisit(visit);
-        preparedStatement.setString(1, String.valueOf(completeVisit.getUserId()));
-        preparedStatement.setString(2, String.valueOf(completeVisit.getRestaurantId()));
-        preparedStatement.setString(3, String.valueOf(completeVisit.getBeginVisit()));
-        preparedStatement.setString(4, String.valueOf(completeVisit.getDurationInMilliseconds()));
-
-        preparedStatement.executeQuery();
+        try {
+            preparedStatement.setString(1, String.valueOf(completeVisit.getUserId()));
+            preparedStatement.setString(2, String.valueOf(completeVisit.getRestaurantId()));
+            preparedStatement.setString(3, String.valueOf(completeVisit.getBeginVisit()));
+            preparedStatement.setString(4, String.valueOf(completeVisit.getDurationInMilliseconds()));
+            preparedStatement.executeQuery();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         return true;
     }
 }
