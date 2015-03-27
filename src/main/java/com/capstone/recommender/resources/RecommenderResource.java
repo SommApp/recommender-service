@@ -25,7 +25,7 @@ public class RecommenderResource {
 		this.defaultName = defaultName;
 		this.counter = new AtomicLong();
 
-        this.visitHandler = null;
+        this.visitHandler = new VisitHandler();
     }
 
 	@GET
@@ -46,8 +46,8 @@ public class RecommenderResource {
     @PUT
     @Timed
     @Path("visit/restaurant/{token}")
-    public void endRestaurantVisit(@PathParam("token") long token) {
-        visitHandler.endVisit(token);
+    public boolean endRestaurantVisit(@PathParam("token") long token) {
+        return visitHandler.endVisit(token);
     }
 
     @GET

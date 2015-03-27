@@ -174,7 +174,7 @@ public class RecommendationEngine {
                 final Analytic analytic = new Analytic(rid, uniqueVisits, totalVisits, frequencyOfVisitLengths);
                 analytics.add(analytic);
             }
-            
+
             this.analytics = analytics;
         }
     }
