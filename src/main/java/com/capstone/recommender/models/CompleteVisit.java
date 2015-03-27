@@ -13,11 +13,7 @@ public class CompleteVisit extends PartialVisit {
     public CompleteVisit(PartialVisit partialVisit) {
         super(partialVisit);
         this.duration = new Interval(beginVisit, new Instant()).toDurationMillis();
-        this.data = userId + "\t" + restaurantId + "\t" + beginVisit + "\t" + duration + "\n";
-    }
-
-    public long getDurationInMilliseconds() {
-        return duration;
+        this.data = pair.uid + "\t" + pair.rid + "\t" + beginVisit + "\t" + duration + "\n";
     }
 
     @Override
@@ -25,26 +21,12 @@ public class CompleteVisit extends PartialVisit {
         return data;
     }
 
-    @Override
-    public int compareTo(@NotNull Object o) {
-
-        if (!(o instanceof CompleteVisit)) {
-            throw new ClassCastException();
-        }
-
-        final CompleteVisit that = (CompleteVisit) o;
-
-        if (super.compareTo(that) == 0) {
-            return 0;
-        }
-
-        if (this.duration < that.duration) {
-            return -1;
-        } else if (this.duration > that.duration) {
-            return 1;
-        }
-
-        return 0;
+    public long getDuration() {
+        return duration;
     }
 
+    public static long getScore(CompleteVisit visit) {
+        final long timeSinceVisit = new Interval(visit.beginVisit, new Instant()).toPeriod().getDays();
+        return (long)(visit.duration/Math.log(timeSinceVisit));
+    }
 }

@@ -23,11 +23,11 @@ public class PartialVisitTest {
 
     @Test
     public void uidTest(){
-        assertEquals("Uid was changed", uid, partialVisit.getUserId());
+        assertEquals("Uid was changed", uid, partialVisit.getUid());
     }
 
     @Test
     public void restaurantIdTest() {
-        assertEquals("Restaurant id was changed", restaurantId, partialVisit.getRestaurantId());
+        assertEquals("Restaurant id was changed", restaurantId, partialVisit.getRid());
     }
 }

@@ -4,62 +4,69 @@ import org.joda.time.DateTime;
 
 import javax.validation.constraints.NotNull;
 
-public class PartialVisit implements Comparable {
+public class PartialVisit {
 
-    protected final long userId;
-    protected final long restaurantId;
+    protected final Pair pair;
     protected final DateTime beginVisit;
 
     public PartialVisit(long userId, long restaurantId) {
-        this.userId = userId;
-        this.restaurantId = restaurantId;
+        this.pair = new Pair(userId, restaurantId);
         this.beginVisit = new DateTime();
     }
 
     protected PartialVisit(PartialVisit that) {
-        this.userId = that.getUserId();
-        this.restaurantId = that.getRestaurantId();
-        this.beginVisit = that.getBeginVisit();
+        this.pair = that.pair;
+        this.beginVisit = that.beginVisit;
     }
 
-    public long getUserId() {
-        return userId;
+    public long getUid() {
+        return this.pair.getUid();
     }
 
-    public long getRestaurantId() {
-        return restaurantId;
+    public long getRid() {
+        return this.pair.getRid();
     }
 
-    public DateTime getBeginVisit() {
-        return beginVisit;
-    }
+    public class Pair implements Comparable{
+        protected final long uid;
+        protected final long rid;
 
-    @Override
-    public int compareTo(@NotNull Object o) {
-        if (!(o instanceof PartialVisit)) {
-            throw new ClassCastException();
+        public Pair(long uid, long rid) {
+            this.uid = uid;
+            this.rid = rid;
         }
 
-        PartialVisit that = (PartialVisit) o;
-
-        if (this.userId < that.userId) {
-            return -1;
-        } else if (this.userId > that.userId) {
-            return 1;
+        public long getUid() {
+            return uid;
         }
 
-
-        if (this.restaurantId < that.restaurantId) {
-            return -1;
-        } else if (this.restaurantId > that.restaurantId) {
-            return 1;
+        public long getRid() {
+            return rid;
         }
 
-        final int beginVisitCompare = this.beginVisit.compareTo(that.beginVisit);
-        if (beginVisitCompare != 0) {
-            return beginVisitCompare;
-        }
+        @Override
+        public int compareTo(Object o) {
 
-        return 0;
+            Pair that;
+            if (!(o instanceof Pair)) {
+                return -1;
+            } else {
+                that = (Pair)o;
+            }
+
+            if (this.uid < that.uid) {
+                return -1;
+            } else if (this.uid == that.uid) {
+                if (this.rid < that.rid) {
+                    return -1;
+                } else if (this.rid == that.rid) {
+                    return 1;
+                } else {
+                    return 1;
+                }
+            } else {
+                return 1;
+            }
+        }
     }
 }
