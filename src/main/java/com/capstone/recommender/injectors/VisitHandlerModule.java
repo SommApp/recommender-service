@@ -8,7 +8,7 @@ import java.util.Map;
 /**
  *  @author sethwiesman on 3/27/15.
  */
-public class VisitHandlerInjector extends AbstractModule {
+public class VisitHandlerModule extends AbstractModule {
 
     @Override
     protected void configure() {
