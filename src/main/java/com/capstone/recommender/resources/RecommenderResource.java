@@ -5,16 +5,11 @@ import com.capstone.recommender.controllers.Impls.StatisticsGeneratorFactory;
 import com.capstone.recommender.controllers.RecommendationEngine;
 import com.capstone.recommender.controllers.VisitHandler;
 
-import com.capstone.recommender.injectors.RecommendationEngineModule;
-import com.capstone.recommender.injectors.VisitHandlerModule;
-
 import com.capstone.recommender.models.Analytic;
 import com.capstone.recommender.models.CompleteVisit;
 import com.capstone.recommender.models.Saying;
 
 import com.google.common.base.Optional;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
 
 import com.yammer.metrics.annotation.Timed;
 
@@ -22,20 +17,13 @@ import org.apache.mahout.cf.taste.recommender.RecommendedItem;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Path("/")
 @Produces(MediaType.APPLICATION_JSON)
 public class RecommenderResource {
-
-    private static final Injector visitHandlerInjector;
-    //private static final Injector recommendationEngineInjector;
-
-    static {
-        visitHandlerInjector = Guice.createInjector(new VisitHandlerModule());
-        //recommendationEngineInjector = Guice.createInjector(new RecommendationEngineModule());
-    }
 
 	private final String template;
 	private final String defaultName;
@@ -49,9 +37,8 @@ public class RecommenderResource {
 		this.defaultName = defaultName;
 		this.counter = new AtomicLong();
 
-        this.visitHandler = visitHandlerInjector.getInstance(VisitHandler.class);
+        this.visitHandler = new VisitHandler(new HashMap<>());
         this.recommendationEngine = new RecommendationEngine(new EngineGeneratorFactory(), new StatisticsGeneratorFactory());
-         //recommendationEngineInjector.getInstance(RecommendationEngine.class);
     }
 
 	@GET

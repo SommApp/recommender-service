@@ -6,7 +6,6 @@ package com.capstone.recommender.controllers;
 
 import com.capstone.recommender.models.CompleteVisit;
 import com.capstone.recommender.models.PartialVisit;
-import com.google.inject.Inject;
 
 
 import java.util.Map;
@@ -18,7 +17,6 @@ public class VisitHandler {
     private final Map<Long, PartialVisit> visitByToken;
     private long token;
 
-    @Inject
     public VisitHandler(Map<Long, PartialVisit> visitByToken) {
         this.visitByToken = visitByToken;
         token = 0;
