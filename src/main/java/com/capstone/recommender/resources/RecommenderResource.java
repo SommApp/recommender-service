@@ -1,5 +1,7 @@
 package com.capstone.recommender.resources;
 
+import com.capstone.recommender.controllers.Impls.EngineGeneratorFactory;
+import com.capstone.recommender.controllers.Impls.StatisticsGeneratorFactory;
 import com.capstone.recommender.controllers.RecommendationEngine;
 import com.capstone.recommender.controllers.VisitHandler;
 
@@ -28,11 +30,11 @@ import java.util.concurrent.atomic.AtomicLong;
 public class RecommenderResource {
 
     private static final Injector visitHandlerInjector;
-    private static final Injector recommendationEngineInjector;
+    //private static final Injector recommendationEngineInjector;
 
     static {
         visitHandlerInjector = Guice.createInjector(new VisitHandlerModule());
-        recommendationEngineInjector = Guice.createInjector(new RecommendationEngineModule());
+        //recommendationEngineInjector = Guice.createInjector(new RecommendationEngineModule());
     }
 
 	private final String template;
@@ -48,7 +50,8 @@ public class RecommenderResource {
 		this.counter = new AtomicLong();
 
         this.visitHandler = visitHandlerInjector.getInstance(VisitHandler.class);
-        this.recommendationEngine = recommendationEngineInjector.getInstance(RecommendationEngine.class);
+        this.recommendationEngine = new RecommendationEngine(new EngineGeneratorFactory(), new StatisticsGeneratorFactory());
+         //recommendationEngineInjector.getInstance(RecommendationEngine.class);
     }
 
 	@GET
