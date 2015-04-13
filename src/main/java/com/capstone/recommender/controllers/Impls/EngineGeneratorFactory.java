@@ -1,7 +1,8 @@
 package com.capstone.recommender.controllers.Impls;
 
 import com.capstone.recommender.controllers.EngineGenerator;
-import com.capstone.recommender.models.CompleteVisit;
+import com.capstone.recommender.models.Visit;
+
 import org.apache.mahout.cf.taste.common.TasteException;
 import org.apache.mahout.cf.taste.impl.common.FastByIDMap;
 import org.apache.mahout.cf.taste.impl.model.GenericDataModel;
@@ -27,17 +28,17 @@ import java.util.stream.Collectors;
 
 public class EngineGeneratorFactory {
 
-    public EngineGenerator create(AtomicReference<List<CompleteVisit>> completeVisitReference,
+    public EngineGenerator create(AtomicReference<List<Visit>> visitReference,
                                   AtomicReference<Recommender> recommenderReference) {
-        return new EngineGeneratorImpl(completeVisitReference, recommenderReference);
+        return new EngineGeneratorImpl(visitReference, recommenderReference);
     }
 
     private class EngineGeneratorImpl implements EngineGenerator {
 
-        private final AtomicReference<List<CompleteVisit>> completeVisitsReference;
+        private final AtomicReference<List<Visit>> completeVisitsReference;
         private final AtomicReference<Recommender> recommenderReference;
 
-        private EngineGeneratorImpl(AtomicReference<List<CompleteVisit>> completeVisitReference,
+        private EngineGeneratorImpl(AtomicReference<List<Visit>> completeVisitReference,
                                     AtomicReference<Recommender> recommenderReference) {
             this.completeVisitsReference = completeVisitReference;
             this.recommenderReference = recommenderReference;
@@ -46,16 +47,16 @@ public class EngineGeneratorFactory {
         @Override
         public void run() {
             final FastByIDMap<PreferenceArray> preferences = new FastByIDMap<>();
-            final Map<Long, List<CompleteVisit>> listOfVisitsByUsers = completeVisitsReference.get().stream()
-                    .collect(Collectors.groupingBy(CompleteVisit::getUid));
+            final Map<Long, List<Visit>> listOfVisitsByUsers = completeVisitsReference.get().stream()
+                    .collect(Collectors.groupingBy(Visit::getUid));
 
             final AtomicInteger indexReference = new AtomicInteger(0);
 
             listOfVisitsByUsers.forEach((user, listOfVisits) -> {
                 final int index = indexReference.incrementAndGet();
 
-                final Map<Long, List<CompleteVisit>> visitsByRestaurant = listOfVisits.stream()
-                        .collect(Collectors.groupingBy(CompleteVisit::getRid));
+                final Map<Long, List<Visit>> visitsByRestaurant = listOfVisits.stream()
+                        .collect(Collectors.groupingBy(Visit::getRid));
 
                 final int numberOfRestaurantsVisited = visitsByRestaurant.keySet().size();
                 final PreferenceArray preferencesForUser = new GenericUserPreferenceArray(numberOfRestaurantsVisited);
@@ -63,7 +64,7 @@ public class EngineGeneratorFactory {
                 preferencesForUser.setUserID(index, user);
 
                 visitsByRestaurant.forEach((restaurant, restaurants) -> {
-                    final long score = restaurants.stream().map(CompleteVisit::getScore).reduce(0L, Long::sum);
+                    final long score = restaurants.stream().map(Visit::getScore).reduce(0L, Long::sum);
                     preferencesForUser.setItemID(index, restaurant);
                     preferencesForUser.setValue(index, score);
                 });

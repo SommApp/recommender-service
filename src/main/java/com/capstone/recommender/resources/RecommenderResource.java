@@ -3,12 +3,11 @@ package com.capstone.recommender.resources;
 import com.capstone.recommender.controllers.Impls.EngineGeneratorFactory;
 import com.capstone.recommender.controllers.Impls.StatisticsGeneratorFactory;
 import com.capstone.recommender.controllers.RecommendationEngine;
-import com.capstone.recommender.controllers.VisitHandler;
 
 import com.capstone.recommender.models.Analytic;
-import com.capstone.recommender.models.CompleteVisit;
 import com.capstone.recommender.models.Saying;
 
+import com.capstone.recommender.models.Visit;
 import com.google.common.base.Optional;
 
 import com.yammer.metrics.annotation.Timed;
@@ -29,7 +28,6 @@ public class RecommenderResource {
 	private final String defaultName;
 	private final AtomicLong counter;
 
-    private final VisitHandler visitHandler;
     private final RecommendationEngine recommendationEngine;
 
 	public RecommenderResource(String template, String defaultName) {
@@ -37,7 +35,6 @@ public class RecommenderResource {
 		this.defaultName = defaultName;
 		this.counter = new AtomicLong();
 
-        this.visitHandler = new VisitHandler(new HashMap<>());
         this.recommendationEngine = new RecommendationEngine(new EngineGeneratorFactory(), new StatisticsGeneratorFactory());
     }
 
@@ -49,23 +46,12 @@ public class RecommenderResource {
 			String.format(template, name.or(defaultName)));
 	}
 
-    @POST
-    @Timed
-    @Path("visit/restaurant/{userId}/{restaurantId}")
-    public long beginRestaurantVisit(@PathParam("userId") long userId, @PathParam("restaurantId") long restaurantId) {
-        return visitHandler.beginVisit(userId, restaurantId);
-    }
 
     @PUT
     @Timed
-    @Path("visit/restaurant/{token}")
-    public boolean endRestaurantVisit(@PathParam("token") long token) {
-        java.util.Optional<CompleteVisit> optionalVisit =  visitHandler.endVisit(token);
-        if (!optionalVisit.isPresent()) {
-            return false;
-        }
-
-        recommendationEngine.addVisit(optionalVisit.get());
+    @Path("visit/restaurant/{uid}/{rid}/{len}")
+    public boolean endRestaurantVisit(@PathParam("uid") long uid, @PathParam("rid") long rid, @PathParam("len") long len) {
+        recommendationEngine.addVisit(new Visit(uid, rid, len));
         return true;
     }
 

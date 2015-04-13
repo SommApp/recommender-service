@@ -4,8 +4,8 @@ import com.capstone.recommender.controllers.Impls.EngineGeneratorFactory;
 
 import com.capstone.recommender.controllers.Impls.StatisticsGeneratorFactory;
 import com.capstone.recommender.models.Analytic;
-import com.capstone.recommender.models.CompleteVisit;
 
+import com.capstone.recommender.models.Visit;
 import org.apache.mahout.cf.taste.common.TasteException;
 import org.apache.mahout.cf.taste.recommender.RecommendedItem;
 import org.apache.mahout.cf.taste.recommender.Recommender;
@@ -25,7 +25,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class RecommendationEngine {
 
-    private final AtomicReference<List<CompleteVisit>> completeVisitsReference;
+    private final AtomicReference<List<Visit>> visitsReference;
     private final AtomicReference<Recommender> recommenderReference;
     private final AtomicReference<Map<Long,Analytic>> analyticsReference;
 
@@ -34,15 +34,15 @@ public class RecommendationEngine {
     public RecommendationEngine(EngineGeneratorFactory engineGeneratorFactory,
                                 StatisticsGeneratorFactory statisticsGeneratorFactory) {
 
-        this.completeVisitsReference = new AtomicReference<>(new ArrayList<>());
+        this.visitsReference = new AtomicReference<>(new ArrayList<>());
         this.recommenderReference = new AtomicReference<>();
         this.analyticsReference = new AtomicReference<>(new HashMap<>());
 
         EngineGenerator engineGenerator = engineGeneratorFactory
-                .create(completeVisitsReference, recommenderReference);
+                .create(visitsReference, recommenderReference);
 
         StatisticsGenerator statisticsGenerator = statisticsGeneratorFactory
-                .create(completeVisitsReference, analyticsReference);
+                .create(visitsReference, analyticsReference);
 
         this.executorService = new ScheduledThreadPoolExecutor(2);
         this.executorService.scheduleAtFixedRate(engineGenerator, 1,  5, TimeUnit.MINUTES);
@@ -57,8 +57,8 @@ public class RecommendationEngine {
         }
     }
 
-    public void addVisit(CompleteVisit visit) {
-        this.completeVisitsReference.get().add(visit);
+    public void addVisit(Visit visit) {
+        this.visitsReference.get().add(visit);
     }
 
     public Analytic getAnalytics(long rid) {

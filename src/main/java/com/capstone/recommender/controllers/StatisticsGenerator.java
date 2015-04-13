@@ -7,8 +7,8 @@ import java.util.concurrent.TimeUnit;
  */
 public interface StatisticsGenerator extends Runnable {
 
-    public static long millisecondsToNearestQuarterHour(long milliseconds) {
-        final long durationInMinutes = TimeUnit.MILLISECONDS.toMinutes(milliseconds);
+    public static long secondsToNearestQuarterHour(long milliseconds) {
+        final long durationInMinutes = TimeUnit.SECONDS.toMinutes(milliseconds);
         final long durationInHours = TimeUnit.MINUTES.toHours(durationInMinutes);
         final long hoursAsMinutes = TimeUnit.HOURS.toMinutes(durationInHours);
         final long subHour = durationInMinutes - hoursAsMinutes;
