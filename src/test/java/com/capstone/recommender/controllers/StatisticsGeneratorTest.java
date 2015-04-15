@@ -1,93 +1,90 @@
 package com.capstone.recommender.controllers;
 
+import com.capstone.recommender.models.Analytic;
+import com.capstone.recommender.models.Visit;
+import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 /**
  * @author sethwiesman on 4/14/15.
  */
 public class StatisticsGeneratorTest {
 
+    private final AtomicReference<List<Visit>> visitReference = new AtomicReference<>();
+    private final AtomicReference<Map<Long, Analytic>> analyticsReference = new AtomicReference<>();
+    private Map<Long, List<Visit>> visitsByRestaurants;
+
+    private StatisticsGenerator generator;
+
+    private static final int numUsers = 20;
+    private static final int numRestaurants = 20;
+
+    @Before
+    public void beforeTests() {
+        final List<Visit> visits = new ArrayList<>();
+
+        //have every user visit every restaurant twice
+        for (int i = 0; i < numUsers; i++) {
+            for (int j = numRestaurants ; j >= 0; j--) {
+                visits.add(new Visit(i, j, TimeUnit.MINUTES.toSeconds(i * 4)));
+                visits.add(new Visit(i, j, TimeUnit.MINUTES.toSeconds(i * 4)));
+            }
+        }
+
+        visitReference.set(visits);
+        generator = StatisticsGenerator.create(visitReference, analyticsReference);
+        visitsByRestaurants = visits.stream().collect(Collectors.groupingBy(Visit::getRid));
+    }
+
     @Test
-    public void roundToZero() {
-        for (int i = 0; i < 7.5; i++) {
-            final long minutes = TimeUnit.MINUTES.toSeconds(i);
-            assertEquals("Should have rounded to 0", 0L,
-                    StatisticsGenerator.secondsToNearestQuarterHour(minutes));
+    public void seeTotalVisits() {
+        Map<Long, Long> map = generator.visitsForRestaurant(visitsByRestaurants);
+        for (Long key : map.keySet()) {
+            assertEquals(key + " did not receive the correct number of visits", 40L, map.get(key).longValue());
         }
     }
 
     @Test
-    public void roundToFifteen() {
-        for (int i = 8; i < 22.5; i++) {
-            final long minutes = TimeUnit.MINUTES.toSeconds(i);
-            assertEquals("Should have rounded to 15", 15L,
-                    StatisticsGenerator.secondsToNearestQuarterHour(minutes));
+    public void seeUniqueVisits() {
+        Map<Long, Long> map = generator.uniqueVisitsForRestaurant(visitsByRestaurants);
+        for (Long key : map.keySet()) {
+            assertEquals(key + " received more visits than there are users", 20L, map.get(key).longValue());
         }
     }
 
     @Test
-    public void roundToThirty() {
-        for (int i = 23; i < 37.5; i++) {
-            final long minutes = TimeUnit.MINUTES.toSeconds(i);
-            assertEquals("Should have rounded to 30", 30L,
-                    StatisticsGenerator.secondsToNearestQuarterHour(minutes));
-        }
-    }
+    public void frequencyOfVisits() {
+        Map<Long, Map<Long, Integer>> map = generator.frequencyOfVisitLength(visitsByRestaurants);
+        for (Long key1 : map.keySet()) {
+            Map<Long, Integer> innerMap = map.get(key1);
+            for (Long key2 : innerMap.keySet()) {
+                long val = innerMap.get(key2).longValue();
+                switch ((int) key2.longValue()) {
+                    case 0:
+                        assertEquals(4, val);
+                        break;
+                    case 75:
+                    case 60:
+                        assertEquals(6, val);
+                        break;
+                    case 45:
+                    case 30:
+                    case 15:
+                        assertEquals(8, val);
+                        break;
+                    default:
+                        assertTrue("Fail", false);
 
-    @Test
-    public void roundToFortyFive() {
-        for (int i = 38; i < 52.5; i++) {
-            final long minutes = TimeUnit.MINUTES.toSeconds(i);
-            assertEquals("Should have rounded to 45", 45L,
-                    StatisticsGenerator.secondsToNearestQuarterHour(minutes));
-        }
-    }
-
-    @Test
-    public void roundTo60() {
-        for (int i = 53; i < 67; i++) {
-            final long minutes = TimeUnit.MINUTES.toSeconds(i);
-            assertEquals("Should have rounded to 60", 60L,
-                    StatisticsGenerator.secondsToNearestQuarterHour(minutes));
-        }
-    }
-
-    @Test
-    public void roundTo75() {
-        for (int i = 68; i < 82.5; i++) {
-            final long minutes = TimeUnit.MINUTES.toSeconds(i);
-            assertEquals("Should have rounded to 75", 75L,
-                    StatisticsGenerator.secondsToNearestQuarterHour(minutes));
-        }
-    }
-
-    @Test
-    public void roundToNinety() {
-        for (int i = 83; i < 97.5; i++) {
-            final long minutes = TimeUnit.MINUTES.toSeconds(i);
-            assertEquals("Should have rounded to 90", 90L,
-                    StatisticsGenerator.secondsToNearestQuarterHour(minutes));
-        }
-    }
-
-    @Test
-    public void roundTo105() {
-        for (int i = 98; i < 112.5; i++) {
-            final long minutes = TimeUnit.MINUTES.toSeconds(i);
-            assertEquals("Should have rounded to 105", 105L,
-                    StatisticsGenerator.secondsToNearestQuarterHour(minutes));
-        }
-    }
-
-    @Test
-    public void roundTo120() {
-        for (int i = 113; i < 127.5; i++) {
-            final long minutes = TimeUnit.MINUTES.toSeconds(i);
-            assertEquals("Should have rounded " + i + " to 120", 120L,
-                    StatisticsGenerator.secondsToNearestQuarterHour(minutes));
+                }
+            }
         }
     }
 }

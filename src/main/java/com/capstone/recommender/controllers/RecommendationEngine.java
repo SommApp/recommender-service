@@ -31,8 +31,9 @@ public class RecommendationEngine {
     public RecommendationEngine() {
 
         this.visitsReference = new AtomicReference<>(new ArrayList<>());
-        this.recommenderReference = new AtomicReference<>();
         this.analyticsReference = new AtomicReference<>(new HashMap<>());
+
+        this.recommenderReference = new AtomicReference<>();
 
         EngineGenerator engineGenerator = EngineGenerator.create(visitsReference, recommenderReference);
         StatisticsGenerator statisticsGenerator = StatisticsGenerator.create(visitsReference, analyticsReference);

@@ -3,10 +3,7 @@ package com.capstone.recommender.controllers;
 import com.capstone.recommender.models.Analytic;
 import com.capstone.recommender.models.Visit;
 
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
@@ -56,13 +53,13 @@ public class StatisticsGenerator implements Runnable {
 
     public Map<Long, Long> visitsForRestaurant(Map<Long, List<Visit>> visitsByRestaurants) {
 
-        final Map<Long, Long> visitsByRestaurant = new HashMap<>();
+        final Map<Long, Long> visitsCounts = new HashMap<>();
         visitsByRestaurants.forEach((restaurant, visits) -> {
-            final long visitCount = visits.stream().map(Visit::getUid).count();
-            visitsByRestaurant.put(restaurant, visitCount);
+            final long numberOfVisits = visits.stream().map(Visit::getUid).count();
+            visitsCounts.put(restaurant, numberOfVisits);
         });
 
-        return visitsByRestaurant;
+        return visitsCounts;
     }
 
     public Map<Long, Long> uniqueVisitsForRestaurant(Map<Long, List<Visit>> visitsByRestaurants) {
@@ -80,11 +77,12 @@ public class StatisticsGenerator implements Runnable {
     public Map<Long, Map<Long, Integer>> frequencyOfVisitLength(Map<Long, List<Visit>> visitsByRestaurants) {
 
         final Map<Long, Map<Long, Integer>> frequencyOfVisitLengthByRestaurant = new HashMap<>();
-
         visitsByRestaurants.forEach((restaurant, visits) -> {
             Map<Long, Integer> frequencies = new HashMap<>();
 
-            visits.stream().map(Visit::getDuration)
+
+            visits.stream()
+                    .map(Visit::getDuration)
                     .map(StatisticsGenerator::secondsToNearestQuarterHour)
                     .collect(Collectors.groupingBy(Long::longValue))
                     .forEach((k, v) -> frequencies.put(k, v.size()));
