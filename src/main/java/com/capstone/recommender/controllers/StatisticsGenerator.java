@@ -7,23 +7,28 @@ import java.util.concurrent.TimeUnit;
  */
 public interface StatisticsGenerator extends Runnable {
 
-    public static long secondsToNearestQuarterHour(long milliseconds) {
-        final long durationInMinutes = TimeUnit.SECONDS.toMinutes(milliseconds);
-        final long durationInHours = TimeUnit.MINUTES.toHours(durationInMinutes);
-        final long hoursAsMinutes = TimeUnit.HOURS.toMinutes(durationInHours);
-        final long subHour = durationInMinutes - hoursAsMinutes;
+    public static long secondsToNearestQuarterHour(long seconds) {
+        final long minutes = TimeUnit.SECONDS.toMinutes(seconds);
 
-        if (subHour >= 0 || subHour < 7.5) {
-            return hoursAsMinutes;
-        } else if (subHour > 7.5 || subHour < 22.5) {
-            return hoursAsMinutes + 15;
-        } else if (subHour > 22.5 || subHour < 37.5) {
-            return hoursAsMinutes + 30;
-        } else if (subHour > 37.5 || subHour < 52.5) {
-            return hoursAsMinutes + 45;
-        } else {
-            return hoursAsMinutes + 60;
+        long subHour = minutes;
+        while (subHour > 60) {
+            subHour -= 60;
         }
+
+        long roundedMinutes;
+        if (subHour < 7.5) {
+            roundedMinutes = 0;
+        } else if (subHour > 7.5 && subHour < 22.5) {
+            roundedMinutes = 15;
+        } else if (subHour > 22.5 && subHour < 37.5) {
+            roundedMinutes = 30;
+        } else if (subHour > 37.5 && subHour < 52.5){
+            roundedMinutes = 45;
+        } else {
+            roundedMinutes = 60;
+        }
+
+        return minutes - subHour + roundedMinutes;
     }
 
 }

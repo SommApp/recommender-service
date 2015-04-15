@@ -16,7 +16,6 @@ import org.apache.mahout.cf.taste.recommender.RecommendedItem;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
-import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -47,11 +46,22 @@ public class RecommenderResource {
 	}
 
 
-    @PUT
+    @POST
     @Timed
     @Path("visit/restaurant/{uid}/{rid}/{len}")
-    public boolean endRestaurantVisit(@PathParam("uid") long uid, @PathParam("rid") long rid, @PathParam("len") long len) {
+    public boolean restaurantVisit(@PathParam("uid") long uid, @PathParam("rid") long rid, @PathParam("len") long len) {
         recommendationEngine.addVisit(new Visit(uid, rid, len));
+        return true;
+    }
+
+    @POST
+    @Timed
+    @Path("visit/restaurant/full/{uid}/{rid}/{len}/{date}")
+    public boolean fullRestaurantVisit(@PathParam("uid") long uid,
+                                       @PathParam("rid") long rid,
+                                       @PathParam("len") long len,
+                                       @PathParam("date") long date) {
+        recommendationEngine.addVisit(new Visit(uid, rid, len, date));
         return true;
     }
 

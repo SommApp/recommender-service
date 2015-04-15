@@ -4,7 +4,6 @@ import org.joda.time.DateTime;
 import org.joda.time.Instant;
 import org.joda.time.Interval;
 
-import javax.validation.constraints.NotNull;
 
 public class Visit  {
 
@@ -25,12 +24,21 @@ public class Visit  {
         return uid;
     }
 
+    public DateTime getDate() { return visitDate; }
+
     public Visit(long uid, long rid, long duration) {
         this.uid = uid;
         this.rid = rid;
         this.duration = duration;
         this.visitDate = new DateTime();
-    };
+    }
+
+    public Visit(long uid, long rid, long duration, long timeSinceEpoch) {
+        this.uid = uid;
+        this.rid = rid;
+        this.duration = duration;
+        this.visitDate = new DateTime(timeSinceEpoch);
+    }
 
     public static long getScore(Visit visit) {
         final long timeSinceVisit = new Interval(visit.visitDate, new Instant()).toPeriod().getDays();
