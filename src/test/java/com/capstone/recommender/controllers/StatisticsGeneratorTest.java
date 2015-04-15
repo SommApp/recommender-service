@@ -45,6 +45,24 @@ public class StatisticsGeneratorTest {
     }
 
     @Test
+    public void runTest() {
+        generator.run();
+        Map<Long, Analytic> analytics = analyticsReference.get();
+
+        //All analytics should be the same
+        assertEquals("Incorrect number of analytics", 21L, analytics.keySet().size());
+
+        for (Long key : analytics.keySet()) {
+            Analytic analytic = analytics.get(key);
+            assertNotNull("Analytics does not contain restaurant " + key, analytic);
+            assertEquals("Analytic has the wrong number of visits", 40L, analytic.getTotalVisits());
+            assertEquals("Analytic has the wrong number of unique visits", 20L, analytic.getUniqueVisits());
+        }
+
+
+    }
+
+    @Test
     public void seeTotalVisits() {
         Map<Long, Long> map = generator.visitsForRestaurant(visitsByRestaurants);
         for (Long key : map.keySet()) {

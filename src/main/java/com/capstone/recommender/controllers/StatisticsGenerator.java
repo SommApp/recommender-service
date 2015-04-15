@@ -111,7 +111,7 @@ public class StatisticsGenerator implements Runnable {
             final Map<Long, Integer> frequencyOfVisitLengths = frequencyOfVisitLengthByRestaurant.get(rid);
 
             final Analytic analytic = new Analytic(rid, uniqueVisits, totalVisits, frequencyOfVisitLengths);
-            analytics.put(analytic.getRestaurantId(), analytic);
+            analytics.put(rid, analytic);
         }
 
         this.analytics.set(analytics);
