@@ -2,7 +2,6 @@ package com.capstone.recommender.controllers;
 
 import com.capstone.recommender.controllers.Impls.EngineGeneratorFactory;
 
-import com.capstone.recommender.controllers.Impls.StatisticsGeneratorFactory;
 import com.capstone.recommender.models.Analytic;
 
 import com.capstone.recommender.models.Visit;
@@ -31,18 +30,14 @@ public class RecommendationEngine {
 
     private final ScheduledExecutorService executorService;
 
-    public RecommendationEngine(EngineGeneratorFactory engineGeneratorFactory,
-                                StatisticsGeneratorFactory statisticsGeneratorFactory) {
+    public RecommendationEngine() {
 
         this.visitsReference = new AtomicReference<>(new ArrayList<>());
         this.recommenderReference = new AtomicReference<>();
         this.analyticsReference = new AtomicReference<>(new HashMap<>());
 
-        EngineGenerator engineGenerator = engineGeneratorFactory
-                .create(visitsReference, recommenderReference);
-
-        StatisticsGenerator statisticsGenerator = statisticsGeneratorFactory
-                .create(visitsReference, analyticsReference);
+        EngineGenerator engineGenerator = EngineGenerator.create(visitsReference, recommenderReference);
+        StatisticsGenerator statisticsGenerator = StatisticsGenerator.create(visitsReference, analyticsReference);
 
         this.executorService = new ScheduledThreadPoolExecutor(2);
         this.executorService.scheduleAtFixedRate(engineGenerator, 1,  5, TimeUnit.MINUTES);
