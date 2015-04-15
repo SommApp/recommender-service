@@ -1,10 +1,8 @@
 package com.capstone.recommender.controllers;
 
-import com.capstone.recommender.controllers.Impls.EngineGeneratorFactory;
-
 import com.capstone.recommender.models.Analytic;
-
 import com.capstone.recommender.models.Visit;
+
 import org.apache.mahout.cf.taste.common.TasteException;
 import org.apache.mahout.cf.taste.recommender.RecommendedItem;
 import org.apache.mahout.cf.taste.recommender.Recommender;
@@ -46,9 +44,9 @@ public class RecommendationEngine {
 
     public List<RecommendedItem> getRecommendations(int uid) {
         try {
-            return this.recommenderReference.get().recommend(40, uid);
+            return this.recommenderReference.get().recommend(uid, 20);
         } catch (TasteException e) {
-            return null;
+            return new ArrayList<>();
         }
     }
 

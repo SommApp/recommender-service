@@ -1,7 +1,5 @@
 package com.capstone.recommender.resources;
 
-import com.capstone.recommender.controllers.Impls.EngineGeneratorFactory;
-import com.capstone.recommender.controllers.Impls.StatisticsGeneratorFactory;
 import com.capstone.recommender.controllers.RecommendationEngine;
 
 import com.capstone.recommender.models.Analytic;
@@ -34,7 +32,7 @@ public class RecommenderResource {
 		this.defaultName = defaultName;
 		this.counter = new AtomicLong();
 
-        this.recommendationEngine = new RecommendationEngine(new EngineGeneratorFactory(), new StatisticsGeneratorFactory());
+        this.recommendationEngine = new RecommendationEngine();
     }
 
 	@GET
