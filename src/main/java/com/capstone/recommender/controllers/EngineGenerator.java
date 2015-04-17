@@ -38,11 +38,14 @@ public class EngineGenerator implements Runnable {
         this.recommenderReference = recommenderReference;
     }
 
+    public Map<Long, List<Visit>> getVisitsByUid(List<Visit> visits) {
+        return visits.stream().collect(Collectors.groupingBy(Visit::getUid));
+    }
+
     @Override
     public void run() {
         final FastByIDMap<PreferenceArray> preferences = new FastByIDMap<>();
-        final Map<Long, List<Visit>> listOfVisitsByUsers = completeVisitsReference.get().stream()
-                .collect(Collectors.groupingBy(Visit::getUid));
+        final Map<Long, List<Visit>> listOfVisitsByUsers = getVisitsByUid(completeVisitsReference.get());
 
         final AtomicInteger indexReference = new AtomicInteger(0);
 
@@ -73,6 +76,7 @@ public class EngineGenerator implements Runnable {
             final Recommender recommender = new GenericUserBasedRecommender(dataModel, neighborhood, userSimilarity);
             recommenderReference.set(recommender);
         } catch (TasteException e) {
+            //Do nothing
             e.printStackTrace();
         }
     }
