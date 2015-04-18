@@ -63,6 +63,7 @@ public class EngineGenerator implements Runnable {
             for (Long restaurant : visitsByRestaurant.keySet()) {
                 final List<Visit> restaurants = visitsByRestaurant.get(restaurant);
                 final long score = restaurants.stream().map(Visit::getScore).reduce(0L, Long::sum);
+                System.out.println(user + " " + restaurant + " " + Math.abs(score));
                 preferencesForUser.setItemID(index, restaurant);
                 preferencesForUser.setValue(index, score);
             }
