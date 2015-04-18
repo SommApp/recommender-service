@@ -6,9 +6,8 @@ import org.apache.mahout.cf.taste.impl.common.FastByIDMap;
 import org.apache.mahout.cf.taste.impl.model.GenericDataModel;
 import org.apache.mahout.cf.taste.impl.model.GenericUserPreferenceArray;
 import org.apache.mahout.cf.taste.impl.neighborhood.NearestNUserNeighborhood;
-import org.apache.mahout.cf.taste.impl.recommender.GenericUserBasedRecommender;
+import org.apache.mahout.cf.taste.impl.recommender.TreeClusteringRecommender;
 import org.apache.mahout.cf.taste.impl.similarity.LogLikelihoodSimilarity;
-import org.apache.mahout.cf.taste.impl.similarity.PearsonCorrelationSimilarity;
 import org.apache.mahout.cf.taste.model.DataModel;
 import org.apache.mahout.cf.taste.model.PreferenceArray;
 import org.apache.mahout.cf.taste.neighborhood.UserNeighborhood;
@@ -17,7 +16,6 @@ import org.apache.mahout.cf.taste.similarity.UserSimilarity;
 
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
@@ -64,7 +62,9 @@ public class EngineGenerator implements Runnable {
             for (Long restaurant : visitsByRestaurant.keySet()) {
                 final List<Visit> restaurants = visitsByRestaurant.get(restaurant);
                 final long score = restaurants.stream().map(Visit::getScore).reduce(0L, Long::sum);
-                System.out.println(user + " " + restaurant + " " + Math.abs(score));
+                if (score == 0) {
+                    continue;
+                }
                 preferencesForUser.setItemID(index, restaurant);
                 preferencesForUser.setValue(index, score);
             }
@@ -76,8 +76,8 @@ public class EngineGenerator implements Runnable {
         try {
             final DataModel dataModel = new GenericDataModel(preferences);
             final UserSimilarity userSimilarity = new LogLikelihoodSimilarity(dataModel);
-            final UserNeighborhood neighborhood = new NearestNUserNeighborhood(40, userSimilarity, dataModel);
-            final Recommender recommender = new GenericUserBasedRecommender(dataModel, neighborhood, userSimilarity);
+            final UserNeighborhood neighborhood = new NearestNUserNeighborhood(20, userSimilarity, dataModel);
+            final Recommender recommender = new TreeClusteringRecommender(dataModel, neighborhood, userSimilarity);
             recommenderReference.set(recommender);
         } catch (TasteException e) {
             //Do nothing
