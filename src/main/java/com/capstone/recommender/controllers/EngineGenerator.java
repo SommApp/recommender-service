@@ -6,11 +6,9 @@ import org.apache.mahout.cf.taste.impl.common.FastByIDMap;
 import org.apache.mahout.cf.taste.impl.model.GenericDataModel;
 import org.apache.mahout.cf.taste.impl.model.GenericUserPreferenceArray;
 
-import org.apache.mahout.cf.taste.impl.recommender.ClusterSimilarity;
-import org.apache.mahout.cf.taste.impl.recommender.FarthestNeighborClusterSimilarity;
-import org.apache.mahout.cf.taste.impl.recommender.TreeClusteringRecommender;
+import org.apache.mahout.cf.taste.impl.neighborhood.NearestNUserNeighborhood;
+import org.apache.mahout.cf.taste.impl.recommender.*;
 
-import org.apache.mahout.cf.taste.impl.recommender.TreeClusteringRecommender2;
 import org.apache.mahout.cf.taste.impl.recommender.knn.ConjugateGradientOptimizer;
 import org.apache.mahout.cf.taste.impl.recommender.knn.KnnItemBasedRecommender;
 import org.apache.mahout.cf.taste.impl.similarity.LogLikelihoodSimilarity;
@@ -18,6 +16,7 @@ import org.apache.mahout.cf.taste.impl.similarity.PearsonCorrelationSimilarity;
 import org.apache.mahout.cf.taste.impl.similarity.TanimotoCoefficientSimilarity;
 import org.apache.mahout.cf.taste.model.DataModel;
 import org.apache.mahout.cf.taste.model.PreferenceArray;
+import org.apache.mahout.cf.taste.neighborhood.UserNeighborhood;
 import org.apache.mahout.cf.taste.recommender.Recommender;
 import org.apache.mahout.cf.taste.similarity.ItemSimilarity;
 import org.apache.mahout.cf.taste.similarity.UserSimilarity;
@@ -79,11 +78,16 @@ public class EngineGenerator implements Runnable {
             preferences.put(user, preferencesForUser);
             index += 1;
         }
+        try{
             final DataModel dataModel = new GenericDataModel(preferences);
-            final ItemSimilarity similarity = new TanimotoCoefficientSimilarity(dataModel);
-            //ClusterSimilarity clusterSimilarity = new FarthestNeighborClusterSimilarity(similarity);
-            Recommender recommender = new KnnItemBasedRecommender(dataModel, similarity, new ConjugateGradientOptimizer(),10);
-            recommenderReference.set(recommender);
+            final UserSimilarity similarity = new TanimotoCoefficientSimilarity(dataModel);
+            UserNeighborhood neighborhood = new NearestNUserNeighborhood(3, similarity, dataModel);
+
+            Recommender recommender = new GenericUserBasedRecommender(dataModel, neighborhood, similarity);
+            recommenderReference.set(new CachingRecommender(recommender));
+        } catch (TasteException e) {
+            e.printStackTrace();
+        }
     }
 
 }
