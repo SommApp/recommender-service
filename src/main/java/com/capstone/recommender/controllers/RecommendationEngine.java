@@ -23,7 +23,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public class RecommendationEngine {
 
     private final AtomicReference<List<Visit>> visitsReference;
-    private final AtomicReference<Recommender> recommenderReference;
+    private final AtomicReference<Map<Long, List<Long>>> recommenderReference;
     private final AtomicReference<Map<Long,Analytic>> analyticsReference;
 
     private final ScheduledExecutorService executorService;
@@ -43,13 +43,8 @@ public class RecommendationEngine {
         this.executorService.scheduleAtFixedRate(statisticsGenerator, 1, 2, TimeUnit.MINUTES);
     }
 
-    public List<RecommendedItem> getRecommendations(int uid) {
-        try {
-            return this.recommenderReference.get().recommend(uid, 10);
-        } catch (TasteException e) {
-            System.out.println(e);
-            return new ArrayList<>();
-        }
+    public List<Long> getRecommendations(int uid) {
+        return this.recommenderReference.get().get(uid);
     }
 
     public void addVisit(Visit visit) {
