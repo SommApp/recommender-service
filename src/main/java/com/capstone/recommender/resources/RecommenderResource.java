@@ -67,7 +67,7 @@ public class RecommenderResource {
     @GET
     @Timed
     @Path("restaurant/recommend/{userId}")
-    public Set<Long> getRecommendations(@PathParam("userId") int userId) {
+    public Set<RecommendedItem> getRecommendations(@PathParam("userId") int userId) {
         return recommendationEngine.getRecommendations(userId);
     }
 

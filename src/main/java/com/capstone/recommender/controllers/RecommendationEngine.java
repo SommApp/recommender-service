@@ -20,7 +20,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public class RecommendationEngine {
 
     private final AtomicReference<List<Visit>> visitsReference;
-    private final AtomicReference<Map<Long, Set<Long>>> recommenderReference;
+    private final AtomicReference<Map<Long, Set<com.capstone.recommender.models.RecommendedItem>>> recommenderReference;
     private final AtomicReference<Map<Long,Analytic>> analyticsReference;
 
     private final ScheduledExecutorService executorService;
@@ -40,7 +40,7 @@ public class RecommendationEngine {
         this.executorService.scheduleAtFixedRate(statisticsGenerator, 1, 2, TimeUnit.MINUTES);
     }
 
-    public Set<Long> getRecommendations(int uid) {
+    public Set<com.capstone.recommender.models.RecommendedItem> getRecommendations(int uid) {
         return this.recommenderReference.get().get(uid);
     }
 

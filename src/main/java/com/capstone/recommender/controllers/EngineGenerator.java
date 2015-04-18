@@ -1,5 +1,6 @@
 package com.capstone.recommender.controllers;
 
+import com.capstone.recommender.models.RecommendedItem;
 import com.capstone.recommender.models.Visit;
 import org.apache.mahout.cf.taste.common.TasteException;
 import org.apache.mahout.cf.taste.impl.common.FastByIDMap;
@@ -25,15 +26,15 @@ import java.util.stream.Collectors;
  */
 public class EngineGenerator implements Runnable {
     public static EngineGenerator create(AtomicReference<List<Visit>> visitReference,
-                                  AtomicReference<Map<Long, Set<Long>>> recommenderReference) {
+                                  AtomicReference<Map<Long, Set<RecommendedItem>>> recommenderReference) {
         return new EngineGenerator(visitReference, recommenderReference);
     }
 
     private final AtomicReference<List<Visit>> completeVisitsReference;
-    private final AtomicReference<Map<Long, Set<Long>>> recommenderReference;
+    private final AtomicReference<Map<Long, Set<RecommendedItem>>> recommenderReference;
 
     private EngineGenerator(AtomicReference<List<Visit>> completeVisitReference,
-                                AtomicReference<Map<Long, Set<Long>>> recommenderReference) {
+                                AtomicReference<Map<Long, Set<RecommendedItem>>> recommenderReference) {
         this.completeVisitsReference = completeVisitReference;
         this.recommenderReference = recommenderReference;
     }
@@ -48,7 +49,7 @@ public class EngineGenerator implements Runnable {
 
     @Override
     public void run() {
-        Map<Long, Set<Long>> recommendations = new HashMap<>();
+        Map<Long, Set<RecommendedItem>> recommendations = new HashMap<>();
         List<Visit> visits = completeVisitsReference.get();
 
         Set<Long> restaurants = findAllRestaurants(visits);
@@ -59,7 +60,7 @@ public class EngineGenerator implements Runnable {
             Set<Long> recs = new HashSet<>(restaurants);
             recs.removeAll(rids);
 
-            recommendations.put(uid, recs);
+            recommendations.put(uid, recs.stream().map(RecommendedItem::new).collect(Collectors.toSet()));
             /**
             System.out.print(uid);
             for (Long key : recs) {
