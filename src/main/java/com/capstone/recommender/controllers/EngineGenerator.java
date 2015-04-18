@@ -5,12 +5,14 @@ import org.apache.mahout.cf.taste.common.TasteException;
 import org.apache.mahout.cf.taste.impl.common.FastByIDMap;
 import org.apache.mahout.cf.taste.impl.model.GenericDataModel;
 import org.apache.mahout.cf.taste.impl.model.GenericUserPreferenceArray;
-import org.apache.mahout.cf.taste.impl.neighborhood.NearestNUserNeighborhood;
+
+import org.apache.mahout.cf.taste.impl.recommender.ClusterSimilarity;
+import org.apache.mahout.cf.taste.impl.recommender.FarthestNeighborClusterSimilarity;
 import org.apache.mahout.cf.taste.impl.recommender.TreeClusteringRecommender;
+
 import org.apache.mahout.cf.taste.impl.similarity.LogLikelihoodSimilarity;
 import org.apache.mahout.cf.taste.model.DataModel;
 import org.apache.mahout.cf.taste.model.PreferenceArray;
-import org.apache.mahout.cf.taste.neighborhood.UserNeighborhood;
 import org.apache.mahout.cf.taste.recommender.Recommender;
 import org.apache.mahout.cf.taste.similarity.UserSimilarity;
 
@@ -46,7 +48,6 @@ public class EngineGenerator implements Runnable {
         final FastByIDMap<PreferenceArray> preferences = new FastByIDMap<>();
         final Map<Long, List<Visit>> listOfVisitsByUsers = getVisitsByUid(completeVisitsReference.get());
 
-        //final AtomicInteger indexReference = new AtomicInteger(0);
         int index = 0;
         for (Long user : listOfVisitsByUsers.keySet()) {
             final List<Visit> listOfVisits = listOfVisitsByUsers.get(user);
@@ -75,9 +76,9 @@ public class EngineGenerator implements Runnable {
 
         try {
             final DataModel dataModel = new GenericDataModel(preferences);
-            final UserSimilarity userSimilarity = new LogLikelihoodSimilarity(dataModel);
-            final UserNeighborhood neighborhood = new NearestNUserNeighborhood(20, userSimilarity, dataModel);
-            final Recommender recommender = new TreeClusteringRecommender(dataModel, neighborhood, userSimilarity);
+            final UserSimilarity similarity = new LogLikelihoodSimilarity(dataModel);
+            ClusterSimilarity clusterSimilarity = new FarthestNeighborClusterSimilarity(similarity);
+            Recommender recommender = new TreeClusteringRecommender(dataModel, clusterSimilarity, 10);
             recommenderReference.set(recommender);
         } catch (TasteException e) {
             //Do nothing
