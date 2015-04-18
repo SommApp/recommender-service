@@ -25,15 +25,15 @@ import java.util.stream.Collectors;
  */
 public class EngineGenerator implements Runnable {
     public static EngineGenerator create(AtomicReference<List<Visit>> visitReference,
-                                  AtomicReference<Map<Long, List<Long>>> recommenderReference) {
+                                  AtomicReference<Map<Long, Set<Long>>> recommenderReference) {
         return new EngineGenerator(visitReference, recommenderReference);
     }
 
     private final AtomicReference<List<Visit>> completeVisitsReference;
-    private final AtomicReference<Map<Long, List<Long>>> recommenderReference;
+    private final AtomicReference<Map<Long, Set<Long>>> recommenderReference;
 
     private EngineGenerator(AtomicReference<List<Visit>> completeVisitReference,
-                                AtomicReference<Map<Long, List<Long>>> recommenderReference) {
+                                AtomicReference<Map<Long, Set<Long>>> recommenderReference) {
         this.completeVisitsReference = completeVisitReference;
         this.recommenderReference = recommenderReference;
     }
@@ -42,27 +42,34 @@ public class EngineGenerator implements Runnable {
         return visits.stream().collect(Collectors.groupingBy(Visit::getUid));
     }
 
+    public Set<Long> findAllRestaurants(List<Visit> visits) {
+        return visits.stream().map(Visit::getRid).collect(Collectors.toSet());
+    }
+
     @Override
     public void run() {
-        Map<Long, List<Long>> recommendations = new HashMap<>();
-        Set<Long> restaurants = new HashSet<>();
+        Map<Long, Set<Long>> recommendations = new HashMap<>();
         List<Visit> visits = completeVisitsReference.get();
 
-        for (Visit visit : visits) {
-            restaurants.add(visit.getRid());
-        }
-
+        Set<Long> restaurants = findAllRestaurants(visits);
         Map<Long, List<Visit>> visitsByUid = visits.stream().collect(Collectors.groupingBy(Visit::getUid));
 
         for (Long uid : visitsByUid.keySet()) {
-            Set<Long> rids = visitsByUid.get(uid).stream().map(Visit::getRid).collect(Collectors.toSet());
+            Set<Long> rids = findAllRestaurants(visitsByUid.get(uid));
             Set<Long> recs = new HashSet<>(restaurants);
             recs.removeAll(rids);
 
-            recommendations.put(uid, new ArrayList<>(recs));
+            recommendations.put(uid, recs);
+            /**
+            System.out.print(uid);
+            for (Long key : recs) {
+                System.out.print("\t" + key);
+            }
+            System.out.println();*/
         }
 
         recommenderReference.set(recommendations);
+        System.out.println("************* updated ************");
     }
 
 }

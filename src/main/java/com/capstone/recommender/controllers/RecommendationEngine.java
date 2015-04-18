@@ -7,10 +7,7 @@ import org.apache.mahout.cf.taste.common.TasteException;
 import org.apache.mahout.cf.taste.recommender.RecommendedItem;
 import org.apache.mahout.cf.taste.recommender.Recommender;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -23,7 +20,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public class RecommendationEngine {
 
     private final AtomicReference<List<Visit>> visitsReference;
-    private final AtomicReference<Map<Long, List<Long>>> recommenderReference;
+    private final AtomicReference<Map<Long, Set<Long>>> recommenderReference;
     private final AtomicReference<Map<Long,Analytic>> analyticsReference;
 
     private final ScheduledExecutorService executorService;
@@ -43,7 +40,7 @@ public class RecommendationEngine {
         this.executorService.scheduleAtFixedRate(statisticsGenerator, 1, 2, TimeUnit.MINUTES);
     }
 
-    public List<Long> getRecommendations(int uid) {
+    public Set<Long> getRecommendations(int uid) {
         return this.recommenderReference.get().get(uid);
     }
 

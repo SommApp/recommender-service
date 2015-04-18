@@ -22,7 +22,7 @@ public class EngineGeneratorTest {
     List<Visit> list;
     EngineGenerator generator;
     AtomicReference<List<Visit>> reference = new AtomicReference<>();
-    AtomicReference<Recommender> recommenderAtomicReference = new AtomicReference<>();
+    AtomicReference<Map<Long, Set<Long>>> recommenderAtomicReference = new AtomicReference<>();
     @Before
     public void before() {
         list = VisitCreatorTest.generateVisits();
@@ -48,5 +48,16 @@ public class EngineGeneratorTest {
         }
 
     }
+
+    @Test
+    public void testRecommendations() {
+        Set<Long> restaurants = generator.findAllRestaurants(list);
+        for (Long restaurant : restaurants) {
+            System.out.print(restaurant + " ");
+        }
+        System.out.println();
+    }
+
+
 
 }

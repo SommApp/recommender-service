@@ -15,6 +15,7 @@ import org.apache.mahout.cf.taste.recommender.RecommendedItem;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Path("/")
@@ -66,7 +67,7 @@ public class RecommenderResource {
     @GET
     @Timed
     @Path("restaurant/recommend/{userId}")
-    public List<Long> getRecommendations(@PathParam("userId") int userId) {
+    public Set<Long> getRecommendations(@PathParam("userId") int userId) {
         return recommendationEngine.getRecommendations(userId);
     }
 
