@@ -82,8 +82,8 @@ public class StatisticsGenerator implements Runnable {
 
             visits.stream()
                     .map(Visit::getDuration)
-                    .map(StatisticsGenerator::secondsToNearestQuarterHour)
-                    .collect(Collectors.groupingBy(Long::longValue))
+                    //.map(StatisticsGenerator::secondsToNearestQuarterHour)
+                    .collect(Collectors.groupingBy((val) -> val))
                     .forEach((k, v) -> frequencies.put(k, v.size()));
 
             frequencyOfVisitLengthByRestaurant.put(restaurant, frequencies);

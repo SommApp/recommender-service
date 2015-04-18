@@ -11,11 +11,14 @@ import org.apache.mahout.cf.taste.impl.recommender.FarthestNeighborClusterSimila
 import org.apache.mahout.cf.taste.impl.recommender.TreeClusteringRecommender;
 
 import org.apache.mahout.cf.taste.impl.recommender.TreeClusteringRecommender2;
+import org.apache.mahout.cf.taste.impl.recommender.knn.ConjugateGradientOptimizer;
+import org.apache.mahout.cf.taste.impl.recommender.knn.KnnItemBasedRecommender;
 import org.apache.mahout.cf.taste.impl.similarity.LogLikelihoodSimilarity;
 import org.apache.mahout.cf.taste.impl.similarity.PearsonCorrelationSimilarity;
 import org.apache.mahout.cf.taste.model.DataModel;
 import org.apache.mahout.cf.taste.model.PreferenceArray;
 import org.apache.mahout.cf.taste.recommender.Recommender;
+import org.apache.mahout.cf.taste.similarity.ItemSimilarity;
 import org.apache.mahout.cf.taste.similarity.UserSimilarity;
 
 import java.util.List;
@@ -78,9 +81,9 @@ public class EngineGenerator implements Runnable {
 
         try {
             final DataModel dataModel = new GenericDataModel(preferences);
-            final UserSimilarity similarity = new PearsonCorrelationSimilarity(dataModel);
-            ClusterSimilarity clusterSimilarity = new FarthestNeighborClusterSimilarity(similarity);
-            Recommender recommender = new TreeClusteringRecommender2(dataModel, clusterSimilarity, 10);
+            final ItemSimilarity similarity = new PearsonCorrelationSimilarity(dataModel);
+            //ClusterSimilarity clusterSimilarity = new FarthestNeighborClusterSimilarity(similarity);
+            Recommender recommender = new KnnItemBasedRecommender(dataModel, similarity, new ConjugateGradientOptimizer(),10);
             recommenderReference.set(recommender);
         } catch (TasteException e) {
             //Do nothing
