@@ -43,6 +43,15 @@ public class Analytic {
     private long uniqueVisits;
     private long totalVisits;
     private Map<Long, Integer> frequencyOfVisitLength;
+
+    public Map<Integer, Integer> getNumVisitsByMonth() {
+        return numVisitsByMonth;
+    }
+
+    public void setNumVisitsByMonth(Map<Integer, Integer> numVisitsByMonth) {
+        this.numVisitsByMonth = numVisitsByMonth;
+    }
+
     private Map<Integer, Integer> numVisitsByMonth;
 
     public Analytic(long restaurantId, long uniqueVisits, long totalVisits,
