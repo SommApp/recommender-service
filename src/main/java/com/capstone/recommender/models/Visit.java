@@ -46,6 +46,9 @@ public class Visit  {
     }
     public static long getScore(Visit visit) {
         final long timeSinceVisit = new Interval(visit.visitDate, new Instant()).toPeriod().getDays();
-        return (long)(visit.duration/Math.log(timeSinceVisit));
+        if (timeSinceVisit == 0) {
+            return 1;
+        }
+        return (visit.duration/(timeSinceVisit));
     }
 }

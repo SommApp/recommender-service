@@ -7,6 +7,7 @@ import org.apache.mahout.cf.taste.impl.model.GenericDataModel;
 import org.apache.mahout.cf.taste.impl.model.GenericUserPreferenceArray;
 import org.apache.mahout.cf.taste.impl.neighborhood.NearestNUserNeighborhood;
 import org.apache.mahout.cf.taste.impl.recommender.GenericUserBasedRecommender;
+import org.apache.mahout.cf.taste.impl.similarity.LogLikelihoodSimilarity;
 import org.apache.mahout.cf.taste.impl.similarity.PearsonCorrelationSimilarity;
 import org.apache.mahout.cf.taste.model.DataModel;
 import org.apache.mahout.cf.taste.model.PreferenceArray;
@@ -74,7 +75,7 @@ public class EngineGenerator implements Runnable {
 
         try {
             final DataModel dataModel = new GenericDataModel(preferences);
-            final UserSimilarity userSimilarity = new PearsonCorrelationSimilarity(dataModel);
+            final UserSimilarity userSimilarity = new LogLikelihoodSimilarity(dataModel);
             final UserNeighborhood neighborhood = new NearestNUserNeighborhood(40, userSimilarity, dataModel);
             final Recommender recommender = new GenericUserBasedRecommender(dataModel, neighborhood, userSimilarity);
             recommenderReference.set(recommender);
