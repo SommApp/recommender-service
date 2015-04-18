@@ -39,8 +39,8 @@ public class RecommendationEngine {
         StatisticsGenerator statisticsGenerator = StatisticsGenerator.create(visitsReference, analyticsReference);
 
         this.executorService = new ScheduledThreadPoolExecutor(2);
-        this.executorService.scheduleAtFixedRate(engineGenerator, 1,  5, TimeUnit.MINUTES);
-        this.executorService.scheduleAtFixedRate(statisticsGenerator, 1, 5, TimeUnit.MINUTES);
+        this.executorService.scheduleAtFixedRate(engineGenerator, 1,  2, TimeUnit.MINUTES);
+        this.executorService.scheduleAtFixedRate(statisticsGenerator, 1, 2, TimeUnit.MINUTES);
     }
 
     public List<RecommendedItem> getRecommendations(int uid) {
