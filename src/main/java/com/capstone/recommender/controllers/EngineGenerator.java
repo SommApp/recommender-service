@@ -15,6 +15,7 @@ import org.apache.mahout.cf.taste.impl.recommender.knn.ConjugateGradientOptimize
 import org.apache.mahout.cf.taste.impl.recommender.knn.KnnItemBasedRecommender;
 import org.apache.mahout.cf.taste.impl.similarity.LogLikelihoodSimilarity;
 import org.apache.mahout.cf.taste.impl.similarity.PearsonCorrelationSimilarity;
+import org.apache.mahout.cf.taste.impl.similarity.TanimotoCoefficientSimilarity;
 import org.apache.mahout.cf.taste.model.DataModel;
 import org.apache.mahout.cf.taste.model.PreferenceArray;
 import org.apache.mahout.cf.taste.recommender.Recommender;
@@ -78,17 +79,11 @@ public class EngineGenerator implements Runnable {
             preferences.put(user, preferencesForUser);
             index += 1;
         }
-
-        try {
             final DataModel dataModel = new GenericDataModel(preferences);
-            final ItemSimilarity similarity = new PearsonCorrelationSimilarity(dataModel);
+            final ItemSimilarity similarity = new TanimotoCoefficientSimilarity(dataModel);
             //ClusterSimilarity clusterSimilarity = new FarthestNeighborClusterSimilarity(similarity);
             Recommender recommender = new KnnItemBasedRecommender(dataModel, similarity, new ConjugateGradientOptimizer(),10);
             recommenderReference.set(recommender);
-        } catch (TasteException e) {
-            //Do nothing
-            e.printStackTrace();
-        }
     }
 
 }
