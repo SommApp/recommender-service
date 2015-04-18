@@ -43,7 +43,7 @@ public class StatisticsGeneratorTest {
         generator = StatisticsGenerator.create(visitReference, analyticsReference);
         visitsByRestaurants = visits.stream().collect(Collectors.groupingBy(Visit::getRid));
 
-        list = VisitCreator.generateVisits();
+        list = VisitCreatorTest.generateVisits();
     }
 
     @Test

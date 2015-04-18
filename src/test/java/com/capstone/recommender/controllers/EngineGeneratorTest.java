@@ -25,7 +25,7 @@ public class EngineGeneratorTest {
     AtomicReference<Recommender> recommenderAtomicReference = new AtomicReference<>();
     @Before
     public void before() {
-        list = VisitCreator.generateVisits();
+        list = VisitCreatorTest.generateVisits();
         reference.set(list);
         generator = EngineGenerator.create(reference, recommenderAtomicReference);
         generator.run();
