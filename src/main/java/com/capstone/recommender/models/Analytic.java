@@ -44,18 +44,18 @@ public class Analytic {
     private long totalVisits;
     private Map<Long, Integer> frequencyOfVisitLength;
 
-    public Map<Integer, Integer> getNumVisitsByMonth() {
+    public Map<String, Integer> getNumVisitsByMonth() {
         return numVisitsByMonth;
     }
 
-    public void setNumVisitsByMonth(Map<Integer, Integer> numVisitsByMonth) {
+    public void setNumVisitsByMonth(Map<String, Integer> numVisitsByMonth) {
         this.numVisitsByMonth = numVisitsByMonth;
     }
 
-    private Map<Integer, Integer> numVisitsByMonth;
+    private Map<String, Integer> numVisitsByMonth;
 
     public Analytic(long restaurantId, long uniqueVisits, long totalVisits,
-                    Map<Long, Integer> frequencyOfVisitLength, Map<Integer, Integer> numVisitsByMonth) {
+                    Map<Long, Integer> frequencyOfVisitLength, Map<String, Integer> numVisitsByMonth) {
         this.restaurantId = restaurantId;
         this.uniqueVisits = uniqueVisits;
         this.totalVisits = totalVisits;

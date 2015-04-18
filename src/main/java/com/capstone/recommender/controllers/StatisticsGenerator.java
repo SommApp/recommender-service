@@ -76,18 +76,18 @@ public class StatisticsGenerator implements Runnable {
         return uniqueVisitsByRestaurant;
     }
 
-    public Map<Long, Map<Integer, Integer>> visitsByMonth(Map<Long, List<Visit>> visits) {
-        Map<Long, Map<Integer, Integer>> visitByMonthForRestaurant = new HashMap<>();
+    public Map<Long, Map<String, Integer>> visitsByDay(Map<Long, List<Visit>> visits) {
+        Map<Long, Map<String, Integer>> visitByMonthForRestaurant = new HashMap<>();
 
         for (Long rid : visits.keySet()) {
             final Map<Integer, List<Visit>> listOfVisitsByMonth = visits.get(rid).stream()
-                    .collect(Collectors.groupingBy((elem) -> elem.getDate().getMonthOfYear()));
+                    .collect(Collectors.groupingBy((elem) -> elem.getDate().getDayOfWeek()));
 
-            final Map<Integer, Integer> numVisitsByMonth = new HashMap<>();
+            final Map<String, Integer> numVisitsByMonth = new HashMap<>();
 
-            for (Integer month : listOfVisitsByMonth.keySet()) {
-                final List<Visit> visitList = listOfVisitsByMonth.get(month);
-                numVisitsByMonth.put(month, visitList.size());
+            for (Integer day : listOfVisitsByMonth.keySet()) {
+                final List<Visit> visitList = listOfVisitsByMonth.get(day);
+                numVisitsByMonth.put(numToStr(day), visitList.size());
             }
 
             visitByMonthForRestaurant.put(rid, numVisitsByMonth);
@@ -96,6 +96,26 @@ public class StatisticsGenerator implements Runnable {
         return visitByMonthForRestaurant;
     }
 
+    private String numToStr(int day) {
+        switch (day) {
+            case 1:
+                return "Monday";
+            case 2:
+                return "Tuesday";
+            case 3:
+                return "Wednesday";
+            case 4:
+                return "Thursday";
+            case 5:
+                return "Friday";
+            case 6:
+                return "Saturday";
+            case 7:
+                return "Sunday";
+            default:
+                return "";
+        }
+    }
     public Map<Long, Map<Long, Integer>> frequencyOfVisitLength(Map<Long, List<Visit>> visitsByRestaurants) {
 
         final Map<Long, Map<Long, Integer>> frequencyOfVisitLengthByRestaurant = new HashMap<>();
@@ -123,7 +143,7 @@ public class StatisticsGenerator implements Runnable {
         final Map<Long, Long> uniqueVisitsByRestaurant = uniqueVisitsForRestaurant(visitsByRestaurants);
         final Map<Long, Long> visitsByRestaurant = visitsForRestaurant(visitsByRestaurants);
         final Map<Long, Map<Long, Integer>> frequencyOfVisitLengthByRestaurant = frequencyOfVisitLength(visitsByRestaurants);
-        final Map<Long, Map<Integer, Integer>> numVisitsByMonthByRestaurant = visitsByMonth(visitsByRestaurants);
+        final Map<Long, Map<String, Integer>> numVisitsByMonthByRestaurant = visitsByDay(visitsByRestaurants);
 
         Map<Long, Analytic> analytics = new Hashtable<>();
 
@@ -131,7 +151,7 @@ public class StatisticsGenerator implements Runnable {
             final long uniqueVisits = uniqueVisitsByRestaurant.get(rid);
             final long totalVisits = visitsByRestaurant.get(rid);
             final Map<Long, Integer> frequencyOfVisitLengths = frequencyOfVisitLengthByRestaurant.get(rid);
-            final Map<Integer, Integer> numVisitsByMonth = numVisitsByMonthByRestaurant.get(rid);
+            final Map<String, Integer> numVisitsByMonth = numVisitsByMonthByRestaurant.get(rid);
 
             final Analytic analytic = new Analytic(rid, uniqueVisits, totalVisits, frequencyOfVisitLengths, numVisitsByMonth);
             analytics.put(rid, analytic);

@@ -1,5 +1,6 @@
 package com.capstone.recommender.controllers;
 
+import com.capstone.recommender.models.RecommendedItem;
 import org.apache.mahout.cf.taste.recommender.Recommender;
 
 import static org.junit.Assert.*;
@@ -22,7 +23,7 @@ public class EngineGeneratorTest {
     List<Visit> list;
     EngineGenerator generator;
     AtomicReference<List<Visit>> reference = new AtomicReference<>();
-    AtomicReference<Map<Long, Set<Long>>> recommenderAtomicReference = new AtomicReference<>();
+    AtomicReference<Map<Long, List<RecommendedItem>>> recommenderAtomicReference = new AtomicReference<>();
     @Before
     public void before() {
         list = VisitCreatorTest.generateVisits();
