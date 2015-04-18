@@ -43,12 +43,14 @@ public class Analytic {
     private long uniqueVisits;
     private long totalVisits;
     private Map<Long, Integer> frequencyOfVisitLength;
+    private Map<Integer, Integer> numVisitsByMonth;
 
     public Analytic(long restaurantId, long uniqueVisits, long totalVisits,
-                    Map<Long, Integer> frequencyOfVisitLength) {
+                    Map<Long, Integer> frequencyOfVisitLength, Map<Integer, Integer> numVisitsByMonth) {
         this.restaurantId = restaurantId;
         this.uniqueVisits = uniqueVisits;
         this.totalVisits = totalVisits;
         this.frequencyOfVisitLength = frequencyOfVisitLength;
+        this.numVisitsByMonth = numVisitsByMonth;
     }
 }
