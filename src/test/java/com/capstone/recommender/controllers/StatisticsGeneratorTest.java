@@ -21,7 +21,7 @@ public class StatisticsGeneratorTest {
     private final AtomicReference<List<Visit>> visitReference = new AtomicReference<>();
     private final AtomicReference<Map<Long, Analytic>> analyticsReference = new AtomicReference<>();
     private Map<Long, List<Visit>> visitsByRestaurants;
-
+    private List<Visit> list;
     private StatisticsGenerator generator;
 
     private static final int numUsers = 20;
@@ -42,6 +42,18 @@ public class StatisticsGeneratorTest {
         visitReference.set(visits);
         generator = StatisticsGenerator.create(visitReference, analyticsReference);
         visitsByRestaurants = visits.stream().collect(Collectors.groupingBy(Visit::getRid));
+
+        list = VisitCreator.generateVisits();
+    }
+
+    @Test
+    public void minutes() {
+        Map<Long, List<Visit>> group = list.stream().collect(Collectors.groupingBy(Visit::getRid));
+        Map<Long, Map<Long, Integer>> freq = generator.frequencyOfVisitLength(group);
+
+        /**for (Long key: freq.keySet()) {
+            System.out.println(key + "  " + freq.toString());
+        }*/
     }
 
     @Test
@@ -58,8 +70,6 @@ public class StatisticsGeneratorTest {
             assertEquals("Analytic has the wrong number of visits", 40L, analytic.getTotalVisits());
             assertEquals("Analytic has the wrong number of unique visits", 20L, analytic.getUniqueVisits());
         }
-
-
     }
 
     @Test

@@ -40,6 +40,10 @@ public class Visit  {
         this.visitDate = new DateTime(timeSinceEpoch);
     }
 
+    @Override
+    public String toString() {
+        return uid + " " + rid + " " + duration;
+    }
     public static long getScore(Visit visit) {
         final long timeSinceVisit = new Interval(visit.visitDate, new Instant()).toPeriod().getDays();
         return (long)(visit.duration/Math.log(timeSinceVisit));

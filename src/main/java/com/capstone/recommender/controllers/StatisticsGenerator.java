@@ -80,7 +80,6 @@ public class StatisticsGenerator implements Runnable {
         visitsByRestaurants.forEach((restaurant, visits) -> {
             Map<Long, Integer> frequencies = new HashMap<>();
 
-
             visits.stream()
                     .map(Visit::getDuration)
                     .map(StatisticsGenerator::secondsToNearestQuarterHour)

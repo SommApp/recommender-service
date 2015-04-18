@@ -47,27 +47,30 @@ public class EngineGenerator implements Runnable {
         final FastByIDMap<PreferenceArray> preferences = new FastByIDMap<>();
         final Map<Long, List<Visit>> listOfVisitsByUsers = getVisitsByUid(completeVisitsReference.get());
 
-        final AtomicInteger indexReference = new AtomicInteger(0);
-
-        listOfVisitsByUsers.forEach((user, listOfVisits) -> {
-            final int index = indexReference.incrementAndGet();
+        //final AtomicInteger indexReference = new AtomicInteger(0);
+        int index = 0;
+        for (Long user : listOfVisitsByUsers.keySet()) {
+            final List<Visit> listOfVisits = listOfVisitsByUsers.get(user);
 
             final Map<Long, List<Visit>> visitsByRestaurant = listOfVisits.stream()
                     .collect(Collectors.groupingBy(Visit::getRid));
 
             final int numberOfRestaurantsVisited = visitsByRestaurant.keySet().size();
-            final PreferenceArray preferencesForUser = new GenericUserPreferenceArray(numberOfRestaurantsVisited);
+            System.out.println("index " + index + " user " + user + " visited " + numberOfRestaurantsVisited + " restaurants");
+            final PreferenceArray preferencesForUser = new GenericUserPreferenceArray(numberOfRestaurantsVisited * 2);
 
             preferencesForUser.setUserID(index, user);
 
-            visitsByRestaurant.forEach((restaurant, restaurants) -> {
+            for (Long restaurant : visitsByRestaurant.keySet()) {
+                final List<Visit> restaurants = visitsByRestaurant.get(restaurant);
                 final long score = restaurants.stream().map(Visit::getScore).reduce(0L, Long::sum);
                 preferencesForUser.setItemID(index, restaurant);
                 preferencesForUser.setValue(index, score);
-            });
+            }
 
             preferences.put(user, preferencesForUser);
-        });
+            index += 1;
+        }
 
         try {
             final DataModel dataModel = new GenericDataModel(preferences);
