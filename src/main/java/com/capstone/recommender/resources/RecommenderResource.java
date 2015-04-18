@@ -67,7 +67,7 @@ public class RecommenderResource {
     @GET
     @Timed
     @Path("restaurant/recommend/{userId}")
-    public Set<RecommendedItem> getRecommendations(@PathParam("userId") int userId) {
+    public Set<com.capstone.recommender.models.RecommendedItem> getRecommendations(@PathParam("userId") int userId) {
         return recommendationEngine.getRecommendations(userId);
     }
 
