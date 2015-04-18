@@ -60,13 +60,14 @@ public class EngineGenerator implements Runnable {
             Set<Long> recs = new HashSet<>(restaurants);
             recs.removeAll(rids);
 
-            recommendations.put(uid, recs.stream().map(RecommendedItem::new).collect(Collectors.toList()));
-            /**
+            List<RecommendedItem> recommendedItems = recs.stream().map(RecommendedItem::new).collect(Collectors.toList());
+            recommendations.put(uid, recommendedItems);
+
             System.out.print(uid);
-            for (Long key : recs) {
-                System.out.print("\t" + key);
+            for (RecommendedItem key : recommendedItems) {
+                System.out.print("\t" + key.getItemId());
             }
-            System.out.println();*/
+            System.out.println();
         }
 
         recommenderReference.set(recommendations);

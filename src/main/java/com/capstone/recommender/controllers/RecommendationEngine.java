@@ -40,7 +40,7 @@ public class RecommendationEngine {
         this.executorService.scheduleAtFixedRate(statisticsGenerator, 1, 2, TimeUnit.MINUTES);
     }
 
-    public List<com.capstone.recommender.models.RecommendedItem> getRecommendations(int uid) {
+    public List<com.capstone.recommender.models.RecommendedItem> getRecommendations(long uid) {
         return this.recommenderReference.get().get(uid);
     }
 
