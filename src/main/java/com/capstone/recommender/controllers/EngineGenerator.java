@@ -80,7 +80,7 @@ public class EngineGenerator implements Runnable {
         }
         try{
             final DataModel dataModel = new GenericDataModel(preferences);
-            final UserSimilarity similarity = new TanimotoCoefficientSimilarity(dataModel);
+            final UserSimilarity similarity = new LogLikelihoodSimilarity(dataModel);
             UserNeighborhood neighborhood = new NearestNUserNeighborhood(3, similarity, dataModel);
 
             Recommender recommender = new GenericUserBasedRecommender(dataModel, neighborhood, similarity);
