@@ -30,7 +30,7 @@ public class RecommendationEngine {
 
     public RecommendationEngine() {
 
-        this.visitsReference = new AtomicReference<>(VisitCreator.generateVisits());
+        this.visitsReference = new AtomicReference<>(new ArrayList<>());
         this.analyticsReference = new AtomicReference<>(new HashMap<>());
 
         this.recommenderReference = new AtomicReference<>(new HashMap<>());
