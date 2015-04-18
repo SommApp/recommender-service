@@ -10,7 +10,9 @@ import org.apache.mahout.cf.taste.impl.recommender.ClusterSimilarity;
 import org.apache.mahout.cf.taste.impl.recommender.FarthestNeighborClusterSimilarity;
 import org.apache.mahout.cf.taste.impl.recommender.TreeClusteringRecommender;
 
+import org.apache.mahout.cf.taste.impl.recommender.TreeClusteringRecommender2;
 import org.apache.mahout.cf.taste.impl.similarity.LogLikelihoodSimilarity;
+import org.apache.mahout.cf.taste.impl.similarity.PearsonCorrelationSimilarity;
 import org.apache.mahout.cf.taste.model.DataModel;
 import org.apache.mahout.cf.taste.model.PreferenceArray;
 import org.apache.mahout.cf.taste.recommender.Recommender;
@@ -76,9 +78,9 @@ public class EngineGenerator implements Runnable {
 
         try {
             final DataModel dataModel = new GenericDataModel(preferences);
-            final UserSimilarity similarity = new LogLikelihoodSimilarity(dataModel);
+            final UserSimilarity similarity = new PearsonCorrelationSimilarity(dataModel);
             ClusterSimilarity clusterSimilarity = new FarthestNeighborClusterSimilarity(similarity);
-            Recommender recommender = new TreeClusteringRecommender(dataModel, clusterSimilarity, 10);
+            Recommender recommender = new TreeClusteringRecommender2(dataModel, clusterSimilarity, 10);
             recommenderReference.set(recommender);
         } catch (TasteException e) {
             //Do nothing
