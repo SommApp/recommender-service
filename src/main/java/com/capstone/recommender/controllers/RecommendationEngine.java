@@ -33,7 +33,7 @@ public class RecommendationEngine {
         this.visitsReference = new AtomicReference<>(new ArrayList<>());
         this.analyticsReference = new AtomicReference<>(new HashMap<>());
 
-        this.recommenderReference = new AtomicReference<>();
+        this.recommenderReference = new AtomicReference<>(new HashMap<>());
 
         EngineGenerator engineGenerator = EngineGenerator.create(visitsReference, recommenderReference);
         StatisticsGenerator statisticsGenerator = StatisticsGenerator.create(visitsReference, analyticsReference);
