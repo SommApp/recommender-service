@@ -47,6 +47,7 @@ public class RecommendationEngine {
         try {
             return this.recommenderReference.get().recommend(uid, 20);
         } catch (TasteException e) {
+            System.out.println(e);
             return new ArrayList<>();
         }
     }
