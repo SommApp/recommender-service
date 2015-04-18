@@ -26,15 +26,15 @@ import java.util.stream.Collectors;
  */
 public class EngineGenerator implements Runnable {
     public static EngineGenerator create(AtomicReference<List<Visit>> visitReference,
-                                  AtomicReference<Map<Long, Set<RecommendedItem>>> recommenderReference) {
+                                  AtomicReference<Map<Long, List<RecommendedItem>>> recommenderReference) {
         return new EngineGenerator(visitReference, recommenderReference);
     }
 
     private final AtomicReference<List<Visit>> completeVisitsReference;
-    private final AtomicReference<Map<Long, Set<RecommendedItem>>> recommenderReference;
+    private final AtomicReference<Map<Long, List<RecommendedItem>>> recommenderReference;
 
     private EngineGenerator(AtomicReference<List<Visit>> completeVisitReference,
-                                AtomicReference<Map<Long, Set<RecommendedItem>>> recommenderReference) {
+                                AtomicReference<Map<Long, List<RecommendedItem>>> recommenderReference) {
         this.completeVisitsReference = completeVisitReference;
         this.recommenderReference = recommenderReference;
     }
@@ -49,7 +49,7 @@ public class EngineGenerator implements Runnable {
 
     @Override
     public void run() {
-        Map<Long, Set<RecommendedItem>> recommendations = new HashMap<>();
+        Map<Long, List<RecommendedItem>> recommendations = new HashMap<>();
         List<Visit> visits = completeVisitsReference.get();
 
         Set<Long> restaurants = findAllRestaurants(visits);
@@ -60,7 +60,7 @@ public class EngineGenerator implements Runnable {
             Set<Long> recs = new HashSet<>(restaurants);
             recs.removeAll(rids);
 
-            recommendations.put(uid, recs.stream().map(RecommendedItem::new).collect(Collectors.toSet()));
+            recommendations.put(uid, recs.stream().map(RecommendedItem::new).collect(Collectors.toList()));
             /**
             System.out.print(uid);
             for (Long key : recs) {
