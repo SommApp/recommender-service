@@ -56,7 +56,6 @@ public class EngineGenerator implements Runnable {
                     .collect(Collectors.groupingBy(Visit::getRid));
 
             final int numberOfRestaurantsVisited = visitsByRestaurant.keySet().size();
-            System.out.println("index " + index + " user " + user + " visited " + numberOfRestaurantsVisited + " restaurants");
             final PreferenceArray preferencesForUser = new GenericUserPreferenceArray(numberOfRestaurantsVisited * 2);
 
             preferencesForUser.setUserID(index, user);
@@ -75,7 +74,7 @@ public class EngineGenerator implements Runnable {
         try {
             final DataModel dataModel = new GenericDataModel(preferences);
             final UserSimilarity userSimilarity = new PearsonCorrelationSimilarity(dataModel);
-            final UserNeighborhood neighborhood = new NearestNUserNeighborhood(2, userSimilarity, dataModel);
+            final UserNeighborhood neighborhood = new NearestNUserNeighborhood(40, userSimilarity, dataModel);
             final Recommender recommender = new GenericUserBasedRecommender(dataModel, neighborhood, userSimilarity);
             recommenderReference.set(recommender);
         } catch (TasteException e) {
