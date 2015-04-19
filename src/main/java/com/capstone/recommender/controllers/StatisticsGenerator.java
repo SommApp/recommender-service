@@ -89,6 +89,7 @@ public class StatisticsGenerator implements Runnable {
             numVisitsPerDay.put("Friday", 0.2f);
             numVisitsPerDay.put("Saturday", 0.25f);
             numVisitsPerDay.put("Sunday", 0.1f);
+            visitByDayForRestaurant.put(rid, numVisitsPerDay);
         }
 
         return visitByDayForRestaurant;
