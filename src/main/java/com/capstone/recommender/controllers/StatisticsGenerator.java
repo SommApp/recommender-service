@@ -57,11 +57,15 @@ public class StatisticsGenerator implements Runnable {
 
         final Map<Long, Long> visitsCounts = new HashMap<>();
         visitsByRestaurants.forEach((restaurant, visits) -> {
-            final long numberOfVisits = visits.stream().map(Visit::getUid).count();
+            final long numberOfVisits = numVisitsForrestaurant(visits);
             visitsCounts.put(restaurant, numberOfVisits);
         });
 
         return visitsCounts;
+    }
+
+    private long numVisitsForrestaurant(List<Visit> visits) {
+        return visits.stream().map(Visit::getUid).count();
     }
 
     public Map<Long, Long> uniqueVisitsForRestaurant(Map<Long, List<Visit>> visitsByRestaurants) {
@@ -96,16 +100,16 @@ public class StatisticsGenerator implements Runnable {
     }
 
 
-    public Map<Long, Map<Long, Integer>> frequencyOfVisitLength(Map<Long, List<Visit>> visitsByRestaurants) {
+    public Map<Long, Map<Long, Float>> frequencyOfVisitLength(Map<Long, List<Visit>> visitsByRestaurants) {
 
-        final Map<Long, Map<Long, Integer>> frequencyOfVisitLengthByRestaurant = new HashMap<>();
+        final Map<Long, Map<Long, Float>> frequencyOfVisitLengthByRestaurant = new HashMap<>();
         visitsByRestaurants.forEach((restaurant, visits) -> {
-            Map<Long, Integer> frequencies = new HashMap<>();
-
+            Map<Long, Float> frequencies = new HashMap<>();
+            long numVisits = numVisitsForrestaurant(visits);
             visits.stream()
                     .map(Visit::getDuration)
                     .collect(Collectors.groupingBy((val) -> val))
-                    .forEach((k, v) -> frequencies.put(k, v.size()));
+                    .forEach((k, v) -> frequencies.put(k, (float)v.size()/numVisits));
 
             frequencyOfVisitLengthByRestaurant.put(restaurant, frequencies);
         });
@@ -121,7 +125,7 @@ public class StatisticsGenerator implements Runnable {
 
         final Map<Long, Long> uniqueVisitsByRestaurant = uniqueVisitsForRestaurant(visitsByRestaurants);
         final Map<Long, Long> visitsByRestaurant = visitsForRestaurant(visitsByRestaurants);
-        final Map<Long, Map<Long, Integer>> frequencyOfVisitLengthByRestaurant = frequencyOfVisitLength(visitsByRestaurants);
+        final Map<Long, Map<Long, Float>> frequencyOfVisitLengthByRestaurant = frequencyOfVisitLength(visitsByRestaurants);
         final Map<Long, Map<String, Float>> numVisitsByMonthByRestaurant = visitsByDay(visitsByRestaurants);
 
         Map<Long, Analytic> analytics = new Hashtable<>();
@@ -129,7 +133,7 @@ public class StatisticsGenerator implements Runnable {
         for (Long rid : uniqueVisitsByRestaurant.keySet()) {
             final long uniqueVisits = uniqueVisitsByRestaurant.get(rid);
             final long totalVisits = visitsByRestaurant.get(rid);
-            final Map<Long, Integer> frequencyOfVisitLengths = frequencyOfVisitLengthByRestaurant.get(rid);
+            final Map<Long, Float> frequencyOfVisitLengths = frequencyOfVisitLengthByRestaurant.get(rid);
             final Map<String, Float> numVisitsByMonth = numVisitsByMonthByRestaurant.get(rid);
 
             final Analytic analytic = new Analytic(rid, uniqueVisits, totalVisits, frequencyOfVisitLengths, numVisitsByMonth);

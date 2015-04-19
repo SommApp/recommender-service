@@ -7,11 +7,11 @@ import java.util.Map;
  */
 public class Analytic {
 
-    public Map<Long, Integer> getFrequencyOfVisitLength() {
+    public Map<Long, Float> getFrequencyOfVisitLength() {
         return frequencyOfVisitLength;
     }
 
-    public void setFrequencyOfVisitLength(Map<Long, Integer> frequencyOfVisitLength) {
+    public void setFrequencyOfVisitLength(Map<Long, Float> frequencyOfVisitLength) {
         this.frequencyOfVisitLength = frequencyOfVisitLength;
     }
 
@@ -42,7 +42,7 @@ public class Analytic {
     private long restaurantId;
     private long uniqueVisits;
     private long totalVisits;
-    private Map<Long, Integer> frequencyOfVisitLength;
+    private Map<Long, Float> frequencyOfVisitLength;
 
     public Map<String, Float> getNumVisitsByDay() {
         return numVisitsByDay;
@@ -55,7 +55,7 @@ public class Analytic {
     private Map<String, Float> numVisitsByDay;
 
     public Analytic(long restaurantId, long uniqueVisits, long totalVisits,
-                    Map<Long, Integer> frequencyOfVisitLength, Map<String, Float> numVisitsByDay) {
+                    Map<Long, Float> frequencyOfVisitLength, Map<String, Float> numVisitsByDay) {
         this.restaurantId = restaurantId;
         this.uniqueVisits = uniqueVisits;
         this.totalVisits = totalVisits;

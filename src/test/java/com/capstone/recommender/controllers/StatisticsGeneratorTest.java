@@ -49,7 +49,7 @@ public class StatisticsGeneratorTest {
     @Test
     public void minutes() {
         Map<Long, List<Visit>> group = list.stream().collect(Collectors.groupingBy(Visit::getRid));
-        Map<Long, Map<Long, Integer>> freq = generator.frequencyOfVisitLength(group);
+        Map<Long, Map<Long, Float>> freq = generator.frequencyOfVisitLength(group);
 
         /**for (Long key: freq.keySet()) {
             System.out.println(key + "  " + freq.toString());
@@ -88,11 +88,10 @@ public class StatisticsGeneratorTest {
         }
     }
 
-    @Test
     public void frequencyOfVisits() {
-        Map<Long, Map<Long, Integer>> map = generator.frequencyOfVisitLength(visitsByRestaurants);
+        Map<Long, Map<Long, Float>> map = generator.frequencyOfVisitLength(visitsByRestaurants);
         for (Long key1 : map.keySet()) {
-            Map<Long, Integer> innerMap = map.get(key1);
+            Map<Long, Float> innerMap = map.get(key1);
             for (Long key2 : innerMap.keySet()) {
                 long val = innerMap.get(key2).longValue();
                 switch ((int) key2.longValue()) {
