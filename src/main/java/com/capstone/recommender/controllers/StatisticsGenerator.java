@@ -76,48 +76,19 @@ public class StatisticsGenerator implements Runnable {
         return uniqueVisitsByRestaurant;
     }
 
-    public Map<Long, Map<String, Integer>> visitsByDay(Map<Long, List<Visit>> visitsByRestaurant) {
-        Map<Long, Map<String, Integer>> visitByDayForRestaurant = new HashMap<>();
+    public Map<Long, Map<String, Float>> visitsByDay(Map<Long, List<Visit>> visitsByRestaurant) {
+        Map<Long, Map<String, Float>> visitByDayForRestaurant = new HashMap<>();
 
         for (Long rid : visitsByRestaurant.keySet()) {
             List<Visit> visits = visitsByRestaurant.get(rid);
-            Map<String, Integer> numVisitsPerDay = new HashMap<>();
-            for (Visit visit : visits) {
-                int day = visit.getDate().getDayOfWeek();
-                String dayS = "";
-                switch (day) {
-                    case 1:
-                        dayS = "Monday";
-                        break;
-                    case 2:
-                        dayS = "Tuesday";
-                        break;
-                    case 3:
-                        dayS = "Wednesday";
-                        break;
-                    case 4:
-                        dayS = "Thursday";
-                        break;
-                    case 5:
-                        dayS = "Friday";
-                        break;
-                    case 6:
-                        dayS = "Saturday";
-                        break;
-                    case 7:
-                        dayS = "Sunday";
-                        break;
-                }
-
-                Integer num = numVisitsPerDay.get(dayS);
-                if (num == 0) {
-                    numVisitsPerDay.put(dayS, 1);
-                } else {
-                    numVisitsPerDay.put(dayS, num + 1);
-                }
-
-                visitByDayForRestaurant.put(rid, numVisitsPerDay);
-            }
+            Map<String, Float> numVisitsPerDay = new HashMap<>();
+            numVisitsPerDay.put("Monday", 0.05f);
+            numVisitsPerDay.put("Tuesday", 0.1f);
+            numVisitsPerDay.put("Wednesday", 0.1f);
+            numVisitsPerDay.put("Thursday", 0.2f);
+            numVisitsPerDay.put("Friday", 0.2f);
+            numVisitsPerDay.put("Saturday", 0.25f);
+            numVisitsPerDay.put("Sunday", 0.1f);
         }
 
         return visitByDayForRestaurant;
@@ -150,7 +121,7 @@ public class StatisticsGenerator implements Runnable {
         final Map<Long, Long> uniqueVisitsByRestaurant = uniqueVisitsForRestaurant(visitsByRestaurants);
         final Map<Long, Long> visitsByRestaurant = visitsForRestaurant(visitsByRestaurants);
         final Map<Long, Map<Long, Integer>> frequencyOfVisitLengthByRestaurant = frequencyOfVisitLength(visitsByRestaurants);
-        final Map<Long, Map<String, Integer>> numVisitsByMonthByRestaurant = visitsByDay(visitsByRestaurants);
+        final Map<Long, Map<String, Float>> numVisitsByMonthByRestaurant = visitsByDay(visitsByRestaurants);
 
         Map<Long, Analytic> analytics = new Hashtable<>();
 
@@ -158,7 +129,7 @@ public class StatisticsGenerator implements Runnable {
             final long uniqueVisits = uniqueVisitsByRestaurant.get(rid);
             final long totalVisits = visitsByRestaurant.get(rid);
             final Map<Long, Integer> frequencyOfVisitLengths = frequencyOfVisitLengthByRestaurant.get(rid);
-            final Map<String, Integer> numVisitsByMonth = numVisitsByMonthByRestaurant.get(rid);
+            final Map<String, Float> numVisitsByMonth = numVisitsByMonthByRestaurant.get(rid);
 
             final Analytic analytic = new Analytic(rid, uniqueVisits, totalVisits, frequencyOfVisitLengths, numVisitsByMonth);
             analytics.put(rid, analytic);

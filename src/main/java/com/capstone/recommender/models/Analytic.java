@@ -44,18 +44,18 @@ public class Analytic {
     private long totalVisits;
     private Map<Long, Integer> frequencyOfVisitLength;
 
-    public Map<String, Integer> getNumVisitsByDay() {
+    public Map<String, Float> getNumVisitsByDay() {
         return numVisitsByDay;
     }
 
-    public void setNumVisitsByDay(Map<String, Integer> numVisitsByDay) {
+    public void setNumVisitsByDay(Map<String, Float> numVisitsByDay) {
         this.numVisitsByDay = numVisitsByDay;
     }
 
-    private Map<String, Integer> numVisitsByDay;
+    private Map<String, Float> numVisitsByDay;
 
     public Analytic(long restaurantId, long uniqueVisits, long totalVisits,
-                    Map<Long, Integer> frequencyOfVisitLength, Map<String, Integer> numVisitsByDay) {
+                    Map<Long, Integer> frequencyOfVisitLength, Map<String, Float> numVisitsByDay) {
         this.restaurantId = restaurantId;
         this.uniqueVisits = uniqueVisits;
         this.totalVisits = totalVisits;
